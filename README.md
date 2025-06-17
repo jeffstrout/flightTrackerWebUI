@@ -7,159 +7,177 @@ A responsive web interface for visualizing real-time flight data collected by th
 🗺️ **Interactive Map** - OpenStreetMap-based flight visualization with custom aircraft markers  
 🔄 **Real-time Updates** - Auto-refreshing flight data with configurable intervals  
 📱 **Responsive Design** - Works seamlessly on desktop, tablet, and mobile devices  
-🔍 **Advanced Filtering** - Search and filter by aircraft type, altitude, speed, and more  
-🚁 **Aircraft Detection** - Automatic identification of helicopters and military aircraft  
-🌙 **Dark Mode** - System preference detection with manual toggle  
-📊 **Live Statistics** - Real-time aircraft counts and performance metrics  
+🚁 **Aircraft Filtering** - Filter by aircraft type including helicopters  
+🔍 **Flight Search** - Search and filter flights by callsign, registration, and more  
+📊 **Live Statistics** - Real-time flight counts and status indicators  
 
-## Prerequisites
+## Technology Stack
 
-- Node.js 18+ 
-- npm or yarn
-- Flight Tracker Collector service running (provides the API)
+- **Frontend**: React 18 + TypeScript + Vite
+- **Mapping**: Leaflet.js with OpenStreetMap tiles  
+- **Styling**: Tailwind CSS for responsive design
+- **HTTP Client**: Axios for API communication
+- **State Management**: React Context + useReducer
+- **Icons**: Lucide React for consistent iconography
 
 ## Quick Start
 
-1. **Clone and install dependencies**
-   ```bash
-   git clone <repository-url>
-   cd flightTrackerWebUI
-   npm install
-   ```
+### Prerequisites
 
-2. **Configure environment**
-   ```bash
-   cp .env .env.local
-   # Edit .env.local with your settings
-   ```
+- Node.js 18+ and npm
+- Running Flight Tracker Collector service
 
-3. **Start development server**
-   ```bash
-   npm run dev
-   ```
+### Installation
 
-4. **Open browser**
-   ```
-   http://localhost:3000
-   ```
+```bash
+# Clone the repository
+git clone https://github.com/jeffstrout/flightTrackerWebUI.git
+cd flightTrackerWebUI
 
-## Environment Configuration
+# Install dependencies
+npm install
 
-Copy `.env` to `.env.local` and customize:
+# Copy environment template
+cp .env.example .env
+
+# Configure your API endpoint
+# Edit .env and set VITE_API_BASE_URL to your collector service URL
+```
+
+### Development
+
+```bash
+# Start development server
+npm run dev
+
+# Run type checking
+npm run type-check
+
+# Run linting
+npm run lint
+```
+
+Visit `http://localhost:5173` to view the application.
+
+### Production Build
+
+```bash
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
+```
+
+## Configuration
+
+The application uses environment variables for configuration:
+
+### Required Settings
 
 ```bash
 # API Configuration
-VITE_API_BASE_URL=http://localhost:8000    # Flight Tracker Collector API
-VITE_DEFAULT_REGION=etex                   # Default region on load
-VITE_REFRESH_INTERVAL=15000               # Auto-refresh interval (ms)
+VITE_API_BASE_URL=http://localhost:8000  # Your Flight Tracker Collector URL
+VITE_DEFAULT_REGION=etex                 # Default region to load
+```
 
-# Map Configuration  
-VITE_MAP_DEFAULT_ZOOM=8                   # Initial zoom level
-VITE_MAP_CENTER_LAT=32.3513              # Default center (Tyler, TX)
-VITE_MAP_CENTER_LON=-95.3011
-VITE_MAP_TILE_SERVER=https://tile.openstreetmap.org/{z}/{x}/{y}.png
+### Optional Settings
+
+```bash
+# Map Configuration
+VITE_MAP_DEFAULT_ZOOM=8                  # Initial zoom level
+VITE_MAP_CENTER_LAT=32.3513             # Default center latitude
+VITE_MAP_CENTER_LON=-95.3011            # Default center longitude
+
+# Update Configuration  
+VITE_REFRESH_INTERVAL=15000             # Auto-refresh interval (ms)
 
 # Feature Flags
-VITE_ENABLE_FLIGHT_TRAILS=true           # Aircraft movement trails
-VITE_ENABLE_CLUSTERING=true              # Marker clustering
-VITE_ENABLE_DARK_MODE=true               # Dark mode toggle
-```
-
-## Available Scripts
-
-### Development
-```bash
-npm run dev          # Start development server with hot reload
-npm run type-check   # Run TypeScript type checking
-npm run lint         # Run ESLint
-npm run lint:fix     # Fix ESLint issues automatically
-```
-
-### Production
-```bash
-npm run build        # Build for production
-npm run preview      # Preview production build locally
-```
-
-### Testing
-```bash
-npm run test         # Run unit tests
-npm run test:ui      # Run tests with UI
-```
-
-## Project Structure
-
-```
-src/
-├── components/
-│   ├── Map/                 # Map and marker components
-│   │   ├── FlightMap.tsx    # Main map container
-│   │   └── AircraftMarker.tsx # Individual aircraft markers
-│   ├── UI/                  # User interface components
-│   │   ├── Header.tsx       # App header with region selector
-│   │   ├── Sidebar.tsx      # Flight list and filters
-│   │   ├── StatusBar.tsx    # Connection status and stats
-│   │   └── FilterPanel.tsx  # Flight filtering controls
-│   └── Aircraft/            # Aircraft-specific components
-│       ├── AircraftList.tsx # List view of flights
-│       └── AircraftCard.tsx # Individual aircraft details
-├── hooks/
-│   ├── useFlightData.ts     # Flight data fetching and state
-│   └── useFilters.ts        # Filter state management
-├── services/
-│   ├── api.ts              # API client for collector service
-│   └── types.ts            # TypeScript type definitions
-└── styles/
-    └── globals.css         # Global styles and Tailwind imports
+VITE_ENABLE_FLIGHT_TRAILS=true          # Show aircraft trails
+VITE_ENABLE_CLUSTERING=true             # Cluster aircraft markers
 ```
 
 ## API Integration
 
-The web UI connects to your Flight Tracker Collector service endpoints:
+This web UI connects to the Flight Tracker Collector service endpoints:
 
+### Primary Endpoints
 - `GET /api/v1/{region}/flights` - All flights for region
-- `GET /api/v1/{region}/choppers` - Helicopters only
+- `GET /api/v1/{region}/choppers` - Helicopters only  
 - `GET /api/v1/regions` - Available regions
-- `GET /api/v1/status` - System health and collector status
+- `GET /api/v1/status` - System health status
 
-## Customization
+### Expected Data Format
 
-### Adding New Regions
-Update the regions list in `src/components/UI/Header.tsx` or fetch dynamically from your API.
-
-### Custom Aircraft Icons
-Modify the SVG icons in `src/components/Map/AircraftMarker.tsx` to customize aircraft appearance.
-
-### Map Styling
-Change the tile server URL in your `.env` file to use different map styles:
-```bash
-# OpenStreetMap (default)
-VITE_MAP_TILE_SERVER=https://tile.openstreetmap.org/{z}/{x}/{y}.png
-
-# CartoDB Positron (light)
-VITE_MAP_TILE_SERVER=https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png
-
-# CartoDB Dark Matter
-VITE_MAP_TILE_SERVER=https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png
+```typescript
+interface Aircraft {
+  hex: string;              // ICAO24 hex code
+  flight?: string;          // Callsign/flight number
+  lat: number;              // Latitude
+  lon: number;              // Longitude
+  alt_baro?: number;        // Barometric altitude (feet)
+  gs?: number;              // Ground speed (knots)
+  track?: number;           // True track (degrees)
+  on_ground: boolean;       // Ground status
+  seen: number;             // Seconds since last update
+  // ... additional fields
+}
 ```
 
-### Filtering Logic
-Extend the filtering system in `src/hooks/useFilters.ts` to add new filter criteria.
+## Architecture
+
+### Component Structure
+
+```
+src/
+├── components/
+│   ├── Map/
+│   │   ├── FlightMap.tsx          # Main map container
+│   │   └── AircraftMarker.tsx     # Aircraft markers
+│   ├── UI/
+│   │   ├── Header.tsx             # App header
+│   │   ├── Sidebar.tsx            # Flight list sidebar
+│   │   └── StatusBar.tsx          # Status information
+│   └── Aircraft/
+│       ├── AircraftList.tsx       # Scrollable flight list
+│       └── AircraftCard.tsx       # Individual flight cards
+├── hooks/
+│   ├── useFlightData.ts           # Flight data management
+│   └── useFilters.ts              # Filter state management
+├── services/
+│   ├── api.ts                     # API client
+│   └── types.ts                   # TypeScript definitions
+└── styles/
+    └── globals.css                # Global styles
+```
+
+### Key Features
+
+- **Real-time Updates**: Polls API every 15 seconds for fresh data
+- **Interactive Map**: Click aircraft for detailed information
+- **Responsive Sidebar**: Collapsible flight list with search/filter
+- **Aircraft Differentiation**: Visual indicators for helicopters, military, etc.
+- **Smooth Animations**: Aircraft position updates with transitions
+- **Performance Optimized**: Efficient rendering for hundreds of aircraft
 
 ## Deployment
 
-### Static Site Deployment
-```bash
-npm run build
-# Deploy the 'dist' folder to your hosting provider
-```
+### Static Site Hosting
+
+The app builds to static files suitable for deployment on:
+
+- **Netlify**: Connect your repository for automatic deployments
+- **Vercel**: Import project and deploy with one click  
+- **AWS S3 + CloudFront**: Upload build files to S3 bucket
+- **GitHub Pages**: Enable in repository settings
 
 ### Docker Deployment
+
 ```dockerfile
 FROM node:18-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci --only=production
+RUN npm ci
 COPY . .
 RUN npm run build
 
@@ -168,24 +186,18 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 EXPOSE 80
 ```
 
-### Environment-Specific Builds
-```bash
-# Development
-npm run build
+### Environment Variables
 
-# Staging
-VITE_API_BASE_URL=https://staging-api.example.com npm run build
-
-# Production  
-VITE_API_BASE_URL=https://api.example.com npm run build
-```
+Ensure your production environment has:
+- `VITE_API_BASE_URL` pointing to your collector service
+- `VITE_DEFAULT_REGION` set to your preferred region
+- Other optional configuration as needed
 
 ## Browser Support
 
-- Chrome 90+
-- Firefox 88+ 
-- Safari 14+
-- Edge 90+
+- Chrome 90+, Firefox 88+, Safari 14+, Edge 90+
+- Mobile browsers: iOS Safari 14+, Chrome Mobile 90+
+- Progressive enhancement for older browsers
 
 ## Contributing
 
@@ -195,24 +207,19 @@ VITE_API_BASE_URL=https://api.example.com npm run build
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## Performance Tips
-
-- The app uses React.memo and useMemo for optimal re-rendering
-- Map markers are recycled for better performance with large datasets
-- Virtual scrolling is implemented for aircraft lists
-- API calls are debounced to prevent excessive requests
-
 ## Troubleshooting
 
-### No Aircraft Showing
-- Verify Flight Tracker Collector service is running at the configured API URL
-- Check browser console for API errors
-- Ensure the region exists and has active collectors
+### Common Issues
 
-### Map Not Loading
-- Check your internet connection
-- Verify the tile server URL is accessible
-- Try a different tile server in your environment configuration
+#### No Data Displayed
+- Verify `VITE_API_BASE_URL` is correct and accessible
+- Check browser console for API errors
+- Ensure Flight Tracker Collector service is running
+
+#### Map Not Loading
+- Check internet connection for OpenStreetMap tiles
+- Verify map center coordinates are valid
+- Clear browser cache and refresh
 
 ### Slow Performance
 - Reduce the refresh interval in your environment configuration
