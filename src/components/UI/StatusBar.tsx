@@ -131,15 +131,6 @@ const StatusBar: React.FC<StatusBarProps> = ({
 
         {/* Right section - System info */}
         <div className="flex items-center space-x-4">
-          {/* Average altitude */}
-          {stats.avgAltitude > 0 && (
-            <div className="hidden lg:flex items-center space-x-1">
-              <Activity className="text-gray-400" size={16} />
-              <span className="text-gray-600 dark:text-gray-400">
-                Avg: {stats.avgAltitude.toLocaleString()} ft
-              </span>
-            </div>
-          )}
 
           {/* API credits (if available) */}
           {systemStatus?.api_credits?.opensky_remaining && (
@@ -156,7 +147,9 @@ const StatusBar: React.FC<StatusBarProps> = ({
           {/* Collectors status */}
           {systemStatus?.collectors && (
             <div className="hidden xl:flex items-center space-x-2">
-              {Object.entries(systemStatus.collectors).map(([name, status]) => (
+              {Object.entries(systemStatus.collectors)
+                .filter(([name, status]) => name !== 'message' && typeof status === 'object' && status.status)
+                .map(([name, status]) => (
                 <div key={name} className="flex items-center space-x-1">
                   <div 
                     className={`w-2 h-2 rounded-full ${
@@ -182,9 +175,6 @@ const StatusBar: React.FC<StatusBarProps> = ({
           <span>{stats.airplanes} airplanes</span>
           <span>{stats.helicopters} choppers</span>
         </div>
-        {stats.avgAltitude > 0 && (
-          <span>Avg: {stats.avgAltitude.toLocaleString()} ft</span>
-        )}
       </div>
     </div>
   );
