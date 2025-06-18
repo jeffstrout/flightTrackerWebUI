@@ -1,17 +1,24 @@
 # Flight Tracker Web UI
 
-A responsive web interface for visualizing real-time flight data collected by the Flight Tracker Collector service. Built with React, TypeScript, and Leaflet for interactive mapping.
+A responsive web interface for visualizing real-time flight data collected by the Flight Tracker Collector service. Built with React, TypeScript, and Leaflet for interactive mapping with advanced filtering and real-time updates.
 
-## Features
+## 🚀 Production Deployment
+
+**Live Application**: http://flight-tracker-web-ui-1750266711.s3-website-us-east-1.amazonaws.com  
+**Backend API**: http://flight-tracker-alb-790028972.us-east-1.elb.amazonaws.com
+
+## ✨ Features
 
 🗺️ **Interactive Map** - OpenStreetMap-based flight visualization with custom aircraft markers  
-🔄 **Real-time Updates** - Auto-refreshing flight data with configurable intervals  
-📱 **Responsive Design** - Works seamlessly on desktop, tablet, and mobile devices  
-🚁 **Aircraft Filtering** - Filter by aircraft type including helicopters  
+🔄 **Real-time Updates** - Auto-refreshing flight data with configurable intervals (5s-5m)  
+📱 **Responsive Design** - Seamless experience on desktop, tablet, and mobile devices  
+🚁 **Aircraft Filtering** - Smart filtering excludes ground aircraft automatically  
 🔍 **Flight Search** - Search and filter flights by callsign, registration, and more  
-📊 **Live Statistics** - Real-time flight counts and status indicators  
+📊 **Clean Statistics** - Optimized status bar showing only relevant flight data  
+⚙️ **Settings Menu** - Configurable refresh intervals via gear icon  
+🌙 **Auto Dark Mode** - Follows system theme preferences  
 
-## Technology Stack
+## 🛠️ Technology Stack
 
 - **Frontend**: React 18 + TypeScript + Vite
 - **Mapping**: Leaflet.js with OpenStreetMap tiles  
@@ -19,8 +26,23 @@ A responsive web interface for visualizing real-time flight data collected by th
 - **HTTP Client**: Axios for API communication
 - **State Management**: React Context + useReducer
 - **Icons**: Lucide React for consistent iconography
+- **Deployment**: AWS S3 + CloudFront with GitHub Actions CI/CD
 
-## Quick Start
+## 🏗️ AWS Infrastructure
+
+### Production Architecture
+- **Frontend**: S3 static website hosting + CloudFront CDN
+- **Backend**: ECS Fargate with Application Load Balancer
+- **Cache**: ElastiCache Redis for performance
+- **Cost Optimization**: Fargate Spot instances, scheduled start/stop (7AM-11PM)
+- **Monitoring**: AWS Budgets with alerts at $50/month
+
+### Deployment Pipeline
+- **GitHub Actions**: Automatic deployment on main branch push
+- **Environment**: Production environment variables managed via GitHub Secrets
+- **Caching**: CloudFront cache invalidation on deployments
+
+## 🚀 Quick Start
 
 ### Prerequisites
 
@@ -69,7 +91,7 @@ npm run build
 npm run preview
 ```
 
-## Configuration
+## ⚙️ Configuration
 
 The application uses environment variables for configuration:
 
@@ -77,7 +99,7 @@ The application uses environment variables for configuration:
 
 ```bash
 # API Configuration
-VITE_API_BASE_URL=http://localhost:8000  # Your Flight Tracker Collector URL
+VITE_API_BASE_URL=http://flight-tracker-alb-790028972.us-east-1.elb.amazonaws.com
 VITE_DEFAULT_REGION=etex                 # Default region to load
 ```
 
@@ -90,19 +112,20 @@ VITE_MAP_CENTER_LAT=32.3513             # Default center latitude
 VITE_MAP_CENTER_LON=-95.3011            # Default center longitude
 
 # Update Configuration  
-VITE_REFRESH_INTERVAL=15000             # Auto-refresh interval (ms)
+VITE_REFRESH_INTERVAL=15000             # Default auto-refresh interval (ms)
 
 # Feature Flags
 VITE_ENABLE_FLIGHT_TRAILS=true          # Show aircraft trails
 VITE_ENABLE_CLUSTERING=true             # Cluster aircraft markers
+VITE_ENABLE_DARK_MODE=true             # Auto dark mode support
 ```
 
-## API Integration
+## 🔗 API Integration
 
 This web UI connects to the Flight Tracker Collector service endpoints:
 
 ### Primary Endpoints
-- `GET /api/v1/{region}/flights` - All flights for region
+- `GET /api/v1/{region}/flights` - All flights for region (airborne only)
 - `GET /api/v1/{region}/choppers` - Helicopters only  
 - `GET /api/v1/regions` - Available regions
 - `GET /api/v1/status` - System health status
@@ -118,13 +141,14 @@ interface Aircraft {
   alt_baro?: number;        // Barometric altitude (feet)
   gs?: number;              // Ground speed (knots)
   track?: number;           // True track (degrees)
-  on_ground: boolean;       // Ground status
+  on_ground: boolean;       // Ground status (automatically filtered out)
   seen: number;             // Seconds since last update
-  // ... additional fields
+  data_source: string;      // opensky/dump1090/blended
+  // ... additional metadata fields
 }
 ```
 
-## Architecture
+## 📁 Architecture
 
 ### Component Structure
 
@@ -135,40 +159,44 @@ src/
 │   │   ├── FlightMap.tsx          # Main map container
 │   │   └── AircraftMarker.tsx     # Aircraft markers
 │   ├── UI/
-│   │   ├── Header.tsx             # App header
+│   │   ├── Header.tsx             # App header with settings
 │   │   ├── Sidebar.tsx            # Flight list sidebar
-│   │   └── StatusBar.tsx          # Status information
+│   │   └── StatusBar.tsx          # Optimized status display
 │   └── Aircraft/
 │       ├── AircraftList.tsx       # Scrollable flight list
 │       └── AircraftCard.tsx       # Individual flight cards
 ├── hooks/
 │   ├── useFlightData.ts           # Flight data management
-│   └── useFilters.ts              # Filter state management
+│   └── useFilters.ts              # Filter state with ground aircraft exclusion
 ├── services/
-│   ├── api.ts                     # API client
+│   ├── api.ts                     # Production API client
 │   └── types.ts                   # TypeScript definitions
 └── styles/
-    └── globals.css                # Global styles
+    └── globals.css                # Global styles with dark mode
 ```
 
-### Key Features
+### Key Features & Optimizations
 
-- **Real-time Updates**: Polls API every 15 seconds for fresh data
-- **Interactive Map**: Click aircraft for detailed information
-- **Responsive Sidebar**: Collapsible flight list with search/filter
-- **Aircraft Differentiation**: Visual indicators for helicopters, military, etc.
-- **Smooth Animations**: Aircraft position updates with transitions
+- **Ground Aircraft Filtering**: Automatically excludes aircraft on ground from all displays
+- **Configurable Refresh**: User-selectable intervals from 5 seconds to 5 minutes via settings menu
+- **Optimized Status Bar**: Clean display without average altitude or unnecessary messages
+- **Interactive Map**: Click aircraft for detailed information with smooth position updates
+- **Responsive Sidebar**: Collapsible flight list with advanced search/filter capabilities
 - **Performance Optimized**: Efficient rendering for hundreds of aircraft
+- **Auto Dark Mode**: Follows system theme preferences automatically
 
-## Deployment
+## 🚀 Deployment
 
-### Static Site Hosting
+### Production (Current)
+- **URL**: http://flight-tracker-web-ui-1750266711.s3-website-us-east-1.amazonaws.com
+- **CI/CD**: GitHub Actions automatic deployment
+- **Infrastructure**: AWS S3 + ECS Fargate + ElastiCache Redis
+- **Cost**: ~$42/month (optimized with Spot instances and scheduling)
 
-The app builds to static files suitable for deployment on:
+### Alternative Hosting Options
 
-- **Netlify**: Connect your repository for automatic deployments
+- **Netlify**: Connect repository for automatic deployments
 - **Vercel**: Import project and deploy with one click  
-- **AWS S3 + CloudFront**: Upload build files to S3 bucket
 - **GitHub Pages**: Enable in repository settings
 
 ### Docker Deployment
@@ -186,20 +214,13 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 EXPOSE 80
 ```
 
-### Environment Variables
+## 🌐 Browser Support
 
-Ensure your production environment has:
-- `VITE_API_BASE_URL` pointing to your collector service
-- `VITE_DEFAULT_REGION` set to your preferred region
-- Other optional configuration as needed
+- **Desktop**: Chrome 90+, Firefox 88+, Safari 14+, Edge 90+
+- **Mobile**: iOS Safari 14+, Chrome Mobile 90+
+- **Progressive Enhancement**: Core functionality works in older browsers
 
-## Browser Support
-
-- Chrome 90+, Firefox 88+, Safari 14+, Edge 90+
-- Mobile browsers: iOS Safari 14+, Chrome Mobile 90+
-- Progressive enhancement for older browsers
-
-## Contributing
+## 🤝 Contributing
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
@@ -207,7 +228,7 @@ Ensure your production environment has:
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## Troubleshooting
+## 🐛 Troubleshooting
 
 ### Common Issues
 
@@ -215,17 +236,44 @@ Ensure your production environment has:
 - Verify `VITE_API_BASE_URL` is correct and accessible
 - Check browser console for API errors
 - Ensure Flight Tracker Collector service is running
+- Try changing refresh interval in settings menu
 
 #### Map Not Loading
 - Check internet connection for OpenStreetMap tiles
 - Verify map center coordinates are valid
-- Clear browser cache and refresh
+- Clear browser cache and hard refresh (Ctrl+Shift+R)
 
-### Slow Performance
-- Reduce the refresh interval in your environment configuration
+#### Settings Menu Not Visible
+- Try hard refresh to clear browser cache
+- Open in incognito/private window
+- Ensure JavaScript is enabled
+
+### Performance Issues
+- Adjust refresh interval via settings menu (gear icon)
 - Enable clustering for high aircraft density areas
-- Check if your system meets the browser requirements
+- Check if your system meets browser requirements
 
-## License
+## 📋 Management Commands
+
+### AWS Service Management
+```bash
+# Start services (7AM daily via Lambda)
+./scripts/manage-flight-tracker.sh start
+
+# Stop services (11PM daily via Lambda)  
+./scripts/manage-flight-tracker.sh stop
+
+# Check service status
+./scripts/manage-flight-tracker.sh status
+
+# Check AWS costs
+./scripts/check-aws-costs.sh
+```
+
+## 📄 License
 
 MIT License - see LICENSE file for details
+
+---
+
+For detailed AWS deployment information, see [AWS_DEPLOYMENT_SUMMARY.md](./AWS_DEPLOYMENT_SUMMARY.md)
