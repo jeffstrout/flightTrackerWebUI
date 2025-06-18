@@ -71,6 +71,11 @@ function App() {
     setUIState(prev => ({ ...prev, sidebarOpen: !prev.sidebarOpen }));
   };
 
+  // Handle refresh interval change
+  const handleRefreshIntervalChange = (interval: number) => {
+    setUIState(prev => ({ ...prev, refreshInterval: interval }));
+  };
+
   // Selected aircraft data
   const selectedAircraftData = filteredAircraft.find(
     ac => ac.hex === uiState.selectedAircraft
@@ -84,6 +89,8 @@ function App() {
         onRegionChange={setRegion}
         onToggleSidebar={toggleSidebar}
         systemStatus={systemStatus}
+        refreshInterval={uiState.refreshInterval}
+        onRefreshIntervalChange={handleRefreshIntervalChange}
       />
 
       {/* Main content area */}
