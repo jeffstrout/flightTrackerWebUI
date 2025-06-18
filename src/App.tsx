@@ -108,7 +108,7 @@ function App() {
             zoom={uiState.mapZoom}
             regionData={regionData}
             onAircraftSelect={handleAircraftSelect}
-            onMapStateChange={handleMapStateChange}
+            onMapStateChange={handleMapStateChange as any}
           />
 
           {/* Mobile sidebar toggle */}

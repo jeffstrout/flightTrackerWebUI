@@ -149,9 +149,6 @@ const FlightMap: React.FC<FlightMapProps> = ({
         style={{ height: '100%', width: '100%' }}
         zoomControl={false}
         ref={mapRef}
-        eventHandlers={{
-          click: handleMapClick,
-        }}
       >
         {/* Map tiles */}
         <TileLayer
