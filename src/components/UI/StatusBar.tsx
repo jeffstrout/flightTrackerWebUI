@@ -39,13 +39,13 @@ const StatusBar: React.FC<StatusBarProps> = ({
     return `${Math.floor(diff / 3600)}h ago`;
   };
 
-  // Calculate statistics
+  // Calculate statistics (using filtered aircraft only)
   const stats = {
     visible: aircraft.length,
     total: totalAircraft,
     helicopters: aircraft.filter(ac => ac.icao_aircraft_class?.startsWith('H')).length,
     airplanes: aircraft.filter(ac => !ac.icao_aircraft_class?.startsWith('H')).length,
-    onGround: aircraft.filter(ac => ac.on_ground).length,
+    onGround: 0, // Always 0 since ground aircraft are filtered out
     avgAltitude: aircraft.length > 0 
       ? Math.round(aircraft.reduce((sum, ac) => sum + (ac.alt_baro || 0), 0) / aircraft.length)
       : 0,

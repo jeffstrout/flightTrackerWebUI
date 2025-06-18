@@ -79,6 +79,11 @@ export function useFilters(aircraft: Aircraft[]): UseFiltersReturn {
   // Apply filters to aircraft list
   const filteredAircraft = useMemo(() => {
     return aircraft.filter((ac) => {
+      // Always exclude aircraft on ground
+      if (ac.on_ground) {
+        return false;
+      }
+
       // Search filter (callsign, registration, operator)
       if (filters.search && filters.search.trim()) {
         const searchTerm = filters.search.toLowerCase().trim();
