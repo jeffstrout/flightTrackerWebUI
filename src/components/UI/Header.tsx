@@ -10,6 +10,7 @@ import {
   AlertTriangle,
   CheckCircle
 } from 'lucide-react';
+import flightAPI from '../../services/api';
 import type { SystemStatus } from '../../services/types';
 
 interface HeaderProps {
@@ -32,11 +33,22 @@ const Header: React.FC<HeaderProps> = ({
   const [regions, setRegions] = useState<string[]>(['etex']); // Default regions
   const [showSettings, setShowSettings] = useState(false);
 
-  // Load available regions (this would come from your API)
+  // Load available regions from API
   useEffect(() => {
-    // For now, use default regions
-    // In a real app, you'd fetch from flightAPI.getRegions()
-    setRegions(['etex', 'socal', 'norcal', 'texas']); // Example regions
+    const loadRegions = async () => {
+      try {
+        const regionsData = await flightAPI.getRegions();
+        if (regionsData.regions && regionsData.regions.length > 0) {
+          const regionNames = regionsData.regions.map(r => r.name || 'unknown').filter(name => name !== 'unknown');
+          setRegions(regionNames.length > 0 ? regionNames : ['etex']);
+        }
+      } catch (error) {
+        console.warn('Failed to load regions from API, using defaults:', error);
+        setRegions(['etex', 'socal', 'norcal', 'texas']); // Fallback regions
+      }
+    };
+    
+    loadRegions();
   }, []);
 
   // Get status indicator

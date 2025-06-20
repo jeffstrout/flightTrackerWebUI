@@ -56,8 +56,8 @@ export function useFlightData(
       setAircraft(flightData);
       setSystemStatus(statusData);
       setRegionData(currentRegionData);
-      setLastUpdate(new Date());
       setLoading(false);
+      setLastUpdate(new Date());
 
       console.info(`✈️ Loaded ${flightData.length} aircraft for region: ${region}`, currentRegionData);
     } catch (err) {
@@ -113,7 +113,7 @@ export function useFlightData(
         abortControllerRef.current.abort();
       }
     };
-  }, [autoRefresh, refreshInterval, refetch, fetchFlightData]);
+  }, [autoRefresh, refreshInterval, refetch]);
 
   // Handle region changes
   const handleRegionChange = useCallback((newRegion: string) => {
@@ -149,7 +149,7 @@ export function useFlightData(
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [autoRefresh, refreshInterval, fetchFlightData]);
+  }, [autoRefresh, refreshInterval]);
 
   // Handle online/offline status
   useEffect(() => {
