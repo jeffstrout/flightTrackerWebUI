@@ -4,6 +4,7 @@ import FlightMap from './components/Map/FlightMap';
 import Header from './components/UI/Header';
 import Sidebar from './components/UI/Sidebar';
 import StatusBar from './components/UI/StatusBar';
+import { VersionInfo } from './components/VersionInfo';
 import { useFlightData } from './hooks/useFlightData';
 import { useFilters } from './hooks/useFilters';
 import type { UIState } from './services/types';
@@ -171,6 +172,9 @@ function App() {
         region={region}
         systemStatus={systemStatus}
       />
+
+      {/* Version info */}
+      <VersionInfo />
     </div>
   );
 }
