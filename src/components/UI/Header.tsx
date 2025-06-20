@@ -142,92 +142,94 @@ const Header: React.FC<HeaderProps> = ({
 
               {/* Settings dropdown */}
               {showSettings && (
-                <div className="absolute right-0 top-full mt-2 w-64 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50">
-                  <div className="p-4 space-y-3">
-                    <h3 className="font-medium text-gray-900 dark:text-gray-100">
-                      Settings
-                    </h3>
-                    
-                    {/* Mobile region selector */}
-                    <div className="md:hidden">
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        Region
-                      </label>
-                      <select
-                        value={region}
-                        onChange={(e) => onRegionChange(e.target.value)}
-                        className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-3 py-2 text-sm"
-                      >
-                        {regions.map((r) => (
-                          <option key={r} value={r}>
-                            {r.toUpperCase()}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    {/* Refresh interval setting */}
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        Refresh Interval
-                      </label>
-                      <select
-                        value={refreshInterval}
-                        onChange={(e) => onRefreshIntervalChange(Number(e.target.value))}
-                        className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-3 py-2 text-sm"
-                      >
-                        <option value={5000}>5 seconds</option>
-                        <option value={10000}>10 seconds</option>
-                        <option value={15000}>15 seconds</option>
-                        <option value={30000}>30 seconds</option>
-                        <option value={60000}>1 minute</option>
-                        <option value={120000}>2 minutes</option>
-                        <option value={300000}>5 minutes</option>
-                      </select>
-                    </div>
-
-                    {/* System info */}
-                    {systemStatus && (
-                      <div className="space-y-2 text-sm">
-                        <div className="flex justify-between">
-                          <span className="text-gray-600 dark:text-gray-400">Status:</span>
-                          <span className={`font-medium ${statusInfo.color}`}>
-                            {statusInfo.text}
-                          </span>
-                        </div>
-                        
-                        {systemStatus.version && (
-                          <div className="flex justify-between">
-                            <span className="text-gray-600 dark:text-gray-400">Version:</span>
-                            <span className="font-mono text-xs">{systemStatus.version}</span>
-                          </div>
-                        )}
-                        
-                        <div className="flex justify-between">
-                          <span className="text-gray-600 dark:text-gray-400">Uptime:</span>
-                          <span className="font-mono text-xs">
-                            {Math.round(systemStatus.uptime / 3600)}h
-                          </span>
-                        </div>
-                        
-                        <div className="flex justify-between">
-                          <span className="text-gray-600 dark:text-gray-400">Refresh:</span>
-                          <span className="text-xs">
-                            {refreshInterval >= 60000 
-                              ? `${refreshInterval / 60000}m` 
-                              : `${refreshInterval / 1000}s`}
-                          </span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                  
-                  {/* Close overlay when clicking outside */}
+                <>
+                  {/* Close overlay when clicking outside - must be before dropdown content */}
                   <div 
                     className="fixed inset-0 z-40" 
                     onClick={() => setShowSettings(false)}
                   />
-                </div>
+                  
+                  <div className="absolute right-0 top-full mt-2 w-64 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50">
+                    <div className="p-4 space-y-3">
+                      <h3 className="font-medium text-gray-900 dark:text-gray-100">
+                        Settings
+                      </h3>
+                      
+                      {/* Mobile region selector */}
+                      <div className="md:hidden">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          Region
+                        </label>
+                        <select
+                          value={region}
+                          onChange={(e) => onRegionChange(e.target.value)}
+                          className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-3 py-2 text-sm"
+                        >
+                          {regions.map((r) => (
+                            <option key={r} value={r}>
+                              {r.toUpperCase()}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {/* Refresh interval setting */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          Refresh Interval
+                        </label>
+                        <select
+                          value={refreshInterval}
+                          onChange={(e) => onRefreshIntervalChange(Number(e.target.value))}
+                          className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-3 py-2 text-sm"
+                        >
+                          <option value={5000}>5 seconds</option>
+                          <option value={10000}>10 seconds</option>
+                          <option value={15000}>15 seconds</option>
+                          <option value={30000}>30 seconds</option>
+                          <option value={60000}>1 minute</option>
+                          <option value={120000}>2 minutes</option>
+                          <option value={300000}>5 minutes</option>
+                        </select>
+                      </div>
+
+                      {/* System info */}
+                      {systemStatus && (
+                        <div className="space-y-2 text-sm">
+                          <div className="flex justify-between">
+                            <span className="text-gray-600 dark:text-gray-400">Status:</span>
+                            <span className={`font-medium ${statusInfo.color}`}>
+                              {statusInfo.text}
+                            </span>
+                          </div>
+                          
+                          {systemStatus.version && (
+                            <div className="flex justify-between">
+                              <span className="text-gray-600 dark:text-gray-400">Version:</span>
+                              <span className="font-mono text-xs">{systemStatus.version}</span>
+                            </div>
+                          )}
+                          
+                          <div className="flex justify-between">
+                            <span className="text-gray-600 dark:text-gray-400">Uptime:</span>
+                            <span className="font-mono text-xs">
+                              {Math.round(systemStatus.uptime / 3600)}h
+                            </span>
+                          </div>
+                          
+                          <div className="flex justify-between">
+                            <span className="text-gray-600 dark:text-gray-400">Refresh:</span>
+                            <span className="text-xs">
+                              {refreshInterval >= 60000 
+                                ? `${refreshInterval / 60000}m` 
+                                : `${refreshInterval / 1000}s`}
+                            </span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </>
               )}
             </div>
           </div>
