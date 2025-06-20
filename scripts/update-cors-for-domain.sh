@@ -14,10 +14,10 @@ cat > /tmp/cors-config.json << 'EOF'
             "AllowedHeaders": ["*"],
             "AllowedMethods": ["GET", "HEAD", "PUT", "POST", "DELETE"],
             "AllowedOrigins": [
-                "http://choppertracker.com",
                 "http://www.choppertracker.com",
-                "https://choppertracker.com",
                 "https://www.choppertracker.com",
+                "http://choppertracker.com",
+                "https://choppertracker.com",
                 "http://api.choppertracker.com",
                 "https://api.choppertracker.com",
                 "http://flight-tracker-web-ui-1750266711.s3-website-us-east-1.amazonaws.com",

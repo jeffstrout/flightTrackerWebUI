@@ -9,25 +9,32 @@
 
 ### Option 1: Simple HTTP Setup (Quickest)
 
+**Important**: GoDaddy doesn't support CNAME records for root domains (@). Use this approach:
+
+#### Step 1: Add DNS Records in GoDaddy
+
 In GoDaddy DNS Management, add these records:
 
-1. **Frontend - choppertracker.com**
-   - Type: `CNAME`
-   - Name: `@` (or leave blank for root domain)
-   - Value: `flight-tracker-web-ui-1750266711.s3-website-us-east-1.amazonaws.com`
-   - TTL: 1 hour
-
-2. **Frontend - www.choppertracker.com**
+1. **Frontend - www.choppertracker.com**
    - Type: `CNAME`
    - Name: `www`
    - Value: `flight-tracker-web-ui-1750266711.s3-website-us-east-1.amazonaws.com`
-   - TTL: 1 hour
+   - TTL: 600 seconds
 
-3. **Backend API - api.choppertracker.com**
+2. **Backend API - api.choppertracker.com**
    - Type: `CNAME`
    - Name: `api`
    - Value: `flight-tracker-alb-790028972.us-east-1.elb.amazonaws.com`
-   - TTL: 1 hour
+   - TTL: 600 seconds
+
+#### Step 2: Set Up Domain Forwarding for Root Domain
+
+1. In GoDaddy, go to your domain settings
+2. Find the "Forwarding" section
+3. Set up forwarding:
+   - Forward to: `http://www.choppertracker.com`
+   - Forward type: `Permanent (301)`
+   - Settings: `Forward with masking` (optional - keeps choppertracker.com in URL bar)
 
 ### Option 2: HTTPS Setup with CloudFront (Recommended)
 
