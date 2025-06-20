@@ -145,11 +145,11 @@ const Header: React.FC<HeaderProps> = ({
                 <>
                   {/* Close overlay when clicking outside - must be before dropdown content */}
                   <div 
-                    className="fixed inset-0 z-40" 
+                    className="fixed inset-0 z-[9000]" 
                     onClick={() => setShowSettings(false)}
                   />
                   
-                  <div className="absolute right-0 top-full mt-2 w-64 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50">
+                  <div className="absolute right-0 top-full mt-2 w-64 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-[9001]">
                     <div className="p-4 space-y-3">
                       <h3 className="font-medium text-gray-900 dark:text-gray-100">
                         Settings
