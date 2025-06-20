@@ -39,12 +39,21 @@ const Header: React.FC<HeaderProps> = ({
       try {
         const regionsData = await flightAPI.getRegions();
         if (regionsData.regions && regionsData.regions.length > 0) {
-          const regionNames = regionsData.regions.map(r => r.name || 'unknown').filter(name => name !== 'unknown');
-          setRegions(regionNames.length > 0 ? regionNames : ['etex']);
+          // Map region names to identifiers used by the app
+          const regionIds = regionsData.regions.map(r => {
+            const name = r.name?.toLowerCase() || '';
+            if (name.includes('texas') || name.includes('etex')) return 'etex';
+            if (name.includes('california') || name.includes('socal')) return 'socal';
+            if (name.includes('norcal')) return 'norcal';
+            // Default to a simplified version of the name
+            return name.replace(/\s+/g, '').toLowerCase() || 'unknown';
+          }).filter(id => id !== 'unknown');
+          
+          setRegions(regionIds.length > 0 ? regionIds : ['etex']);
         }
       } catch (error) {
         console.warn('Failed to load regions from API, using defaults:', error);
-        setRegions(['etex', 'socal', 'norcal', 'texas']); // Fallback regions
+        setRegions(['etex']); // Only use etex as fallback since that's what the API supports
       }
     };
     
