@@ -28,6 +28,41 @@ jobs:
     - name: Run tests
       run: npm test -- --run || true
 
+    - name: Update version info
+      run: |
+        COMMIT_HASH=$(git rev-parse --short HEAD)
+        COMMIT_FULL=$(git rev-parse HEAD)
+        BRANCH=$(git rev-parse --abbrev-ref HEAD)
+        BUILD_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+        CLEAN=$(git diff --quiet && echo true || echo false)
+        
+        # Update config.js with current git info
+        cat > public/config.js << EOF
+        // Flight Tracker Web UI Configuration
+        window.FLIGHT_TRACKER_CONFIG = {
+          VERSION: {
+            "version": "1.0.7",
+            "commit": "$COMMIT_HASH",
+            "commit_full": "$COMMIT_FULL",
+            "branch": "$BRANCH",
+            "clean": $CLEAN,
+            "buildTime": "$BUILD_TIME",
+            "environment": "production"
+          },
+          
+          // Application metadata
+          APP_INFO: {
+            "name": "Flight Tracker Web UI",
+            "description": "Real-time flight tracking interface",
+            "author": "Flight Tracker Team"
+          },
+          
+          // Cache busting timestamp  
+          CACHE_BUST: Date.now(),
+          DEPLOY_TIME: "$BUILD_TIME"
+        };
+        EOF
+
     - name: Build application
       run: npm run build
       env:

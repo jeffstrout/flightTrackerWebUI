@@ -1,8 +1,8 @@
 // Flight Tracker Web UI Configuration
 window.FLIGHT_TRACKER_CONFIG = {
   VERSION: {
-    "version": "1.0.6",
-    "commit": "6e61ee3",
+    "version": "1.0.7",
+    "commit": "797c5b3",
     "branch": "main",
     "clean": false,
     "buildTime": new Date().toISOString(),
@@ -18,5 +18,5 @@ window.FLIGHT_TRACKER_CONFIG = {
   
   // Cache busting timestamp  
   CACHE_BUST: Date.now(),
-  DEPLOY_TIME: "2025-06-21T20:38:00Z"
+  DEPLOY_TIME: new Date().toISOString()
 };

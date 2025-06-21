@@ -4,7 +4,7 @@
 
 ### ✅ Fully Operational
 - **Frontend URL**: http://flight-tracker-web-ui-1750266711.s3-website-us-east-1.amazonaws.com
-- **Backend API**: http://flight-tracker-alb-790028972.us-east-1.elb.amazonaws.com
+- **Backend API**: https://flight-tracker-alb-790028972.us-east-1.elb.amazonaws.com
 - **Status**: 🟢 Live and operational
 - **Last Updated**: December 2024
 
@@ -22,7 +22,7 @@
 - **ECS Cluster**: `flight-tracker-cluster`
 - **Service**: `flight-tracker-backend` (Fargate Spot instances)
 - **ECR Repository**: `958933162000.dkr.ecr.us-east-1.amazonaws.com/flight-tracker-backend`
-- **Load Balancer**: `flight-tracker-alb-790028972.us-east-1.elb.amazonaws.com`
+- **Load Balancer**: `flight-tracker-alb-790028972.us-east-1.elb.amazonaws.com` (HTTPS enabled)
 - **Redis Cache**: `flight-tracker-redis` (ElastiCache)
 - **Deployment**: GitHub Actions CI/CD pipeline
 
@@ -82,7 +82,7 @@ AWS_SECRET_ACCESS_KEY=...
 S3_BUCKET=flight-tracker-web-ui-1750266711
 CLOUDFRONT_DISTRIBUTION_ID=EWPRBI0A74MVL
 CLOUDFRONT_DOMAIN=d2ykgne47c9o7.cloudfront.net
-VITE_API_BASE_URL=http://flight-tracker-alb-790028972.us-east-1.elb.amazonaws.com
+VITE_API_BASE_URL=https://flight-tracker-alb-790028972.us-east-1.elb.amazonaws.com
 VITE_DEFAULT_REGION=etex
 VITE_REFRESH_INTERVAL=15000
 ```
@@ -96,7 +96,7 @@ ECS_SERVICE=flight-tracker-backend
 TASK_EXEC_ROLE_ARN=arn:aws:iam::958933162000:role/flight-tracker-task-execution-role
 LOG_GROUP=/ecs/flight-tracker
 REDIS_CLUSTER_ID=flight-tracker-redis
-ALB_DNS=flight-tracker-alb-790028972.us-east-1.elb.amazonaws.com
+ALB_DNS=flight-tracker-alb-790028972.us-east-1.elb.amazonaws.com (HTTPS)
 ```
 
 ## 🧪 Testing Commands
@@ -104,16 +104,16 @@ ALB_DNS=flight-tracker-alb-790028972.us-east-1.elb.amazonaws.com
 ### API Health Checks
 ```bash
 # System status
-curl http://flight-tracker-alb-790028972.us-east-1.elb.amazonaws.com/api/v1/status
+curl https://flight-tracker-alb-790028972.us-east-1.elb.amazonaws.com/api/v1/status
 
 # Available regions
-curl http://flight-tracker-alb-790028972.us-east-1.elb.amazonaws.com/api/v1/regions
+curl https://flight-tracker-alb-790028972.us-east-1.elb.amazonaws.com/api/v1/regions
 
 # Flight data (airborne only)
-curl http://flight-tracker-alb-790028972.us-east-1.elb.amazonaws.com/api/v1/etex/flights
+curl https://flight-tracker-alb-790028972.us-east-1.elb.amazonaws.com/api/v1/etex/flights
 
 # Helicopter data
-curl http://flight-tracker-alb-790028972.us-east-1.elb.amazonaws.com/api/v1/etex/choppers
+curl https://flight-tracker-alb-790028972.us-east-1.elb.amazonaws.com/api/v1/etex/choppers
 ```
 
 ### Frontend Testing
@@ -211,7 +211,7 @@ aws s3 sync dist/ s3://flight-tracker-web-ui-1750266711 --delete
 #### Frontend Shows "Offline"
 1. Check backend service status: `./scripts/manage-flight-tracker.sh status`
 2. Verify ECS service is running in AWS Console
-3. Test API directly: `curl http://flight-tracker-alb-790028972.us-east-1.elb.amazonaws.com/api/v1/status`
+3. Test API directly: `curl https://flight-tracker-alb-790028972.us-east-1.elb.amazonaws.com/api/v1/status`
 
 #### GitHub Actions Deployment Fails
 1. Check AWS credentials in GitHub Secrets

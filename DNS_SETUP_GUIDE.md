@@ -2,7 +2,7 @@
 
 ## Current AWS Resources
 - **Frontend (S3)**: http://flight-tracker-web-ui-1750266711.s3-website-us-east-1.amazonaws.com
-- **Backend API (ALB)**: http://flight-tracker-alb-790028972.us-east-1.elb.amazonaws.com
+- **Backend API (ALB)**: https://flight-tracker-alb-790028972.us-east-1.elb.amazonaws.com
 - **CloudFront Distribution**: EWPRBI0A74MVL
 
 ## GoDaddy DNS Configuration
@@ -88,12 +88,12 @@ The backend API will also need to allow the new domain. Update your backend CORS
 Update the environment variable to use the new API domain:
 
 ```bash
-VITE_API_BASE_URL=http://api.choppertracker.com
+VITE_API_BASE_URL=https://api.choppertracker.com
 ```
 
 Or if staying with direct ALB access:
 ```bash
-VITE_API_BASE_URL=http://flight-tracker-alb-790028972.us-east-1.elb.amazonaws.com
+VITE_API_BASE_URL=https://flight-tracker-alb-790028972.us-east-1.elb.amazonaws.com
 ```
 
 ## DNS Propagation

@@ -5,7 +5,7 @@ A responsive web interface for visualizing real-time flight data collected by th
 ## 🚀 Production Deployment
 
 **Live Application**: http://flight-tracker-web-ui-1750266711.s3-website-us-east-1.amazonaws.com  
-**Backend API**: http://flight-tracker-alb-790028972.us-east-1.elb.amazonaws.com
+**Backend API**: https://flight-tracker-alb-790028972.us-east-1.elb.amazonaws.com
 
 ## ✨ Features
 
@@ -99,7 +99,7 @@ The application uses environment variables for configuration:
 
 ```bash
 # API Configuration
-VITE_API_BASE_URL=http://flight-tracker-alb-790028972.us-east-1.elb.amazonaws.com
+VITE_API_BASE_URL=https://flight-tracker-alb-790028972.us-east-1.elb.amazonaws.com
 VITE_DEFAULT_REGION=etex                 # Default region to load
 ```
 

@@ -5,7 +5,7 @@ A responsive web interface for visualizing real-time flight data collected by th
 
 ## 🚀 Current Production Status
 - **Live URL**: http://flight-tracker-web-ui-1750266711.s3-website-us-east-1.amazonaws.com
-- **Backend API**: http://flight-tracker-alb-790028972.us-east-1.elb.amazonaws.com
+- **Backend API**: https://flight-tracker-alb-790028972.us-east-1.elb.amazonaws.com
 - **Status**: ✅ Fully operational with all optimizations implemented
 - **Cost**: ~$42/month (optimized from original $65/month)
 
