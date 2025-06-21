@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useRef } from 'react';
-import { MapContainer, TileLayer, useMap, useMapEvents } from 'react-leaflet';
+import { useMap, useMapEvents } from 'react-leaflet';
 import { LatLngTuple } from 'leaflet';
 import { Plus, Minus, Home } from 'lucide-react';
+import SafeMapContainer from './SafeMapContainer';
 import AircraftMarker from './AircraftMarker';
 import type { Aircraft, Region } from '../../services/types';
 
@@ -176,20 +177,13 @@ const FlightMap: React.FC<FlightMapProps> = ({
 
   return (
     <div className="h-full w-full relative">
-      <MapContainer
+      <SafeMapContainer
         center={finalCenter}
         zoom={finalZoom}
         style={{ height: '100%', width: '100%' }}
         zoomControl={false}
-        ref={mapRef}
-        key={`map-${finalCenter[0]}-${finalCenter[1]}-${finalZoom}`}
+        onMapReady={(map) => { mapRef.current = map; }}
       >
-        {/* Map tiles */}
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url={import.meta.env.VITE_MAP_TILE_SERVER || 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'}
-          maxZoom={19}
-        />
 
         {/* Aircraft markers */}
         {aircraft.map((ac) => {
@@ -222,7 +216,7 @@ const FlightMap: React.FC<FlightMapProps> = ({
           center={finalCenter}
           zoom={finalZoom}
         />
-      </MapContainer>
+      </SafeMapContainer>
 
       {/* Map Controls */}
       <div className="absolute top-4 right-4 z-[1000] flex flex-col space-y-1">
