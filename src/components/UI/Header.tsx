@@ -172,10 +172,6 @@ const Header: React.FC<HeaderProps> = ({
                   
                   <div className="absolute right-0 top-full mt-2 w-64 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-[9001]">
                     <div className="p-4 space-y-3">
-                      {(() => {
-                        try {
-                          return (
-                            <>
                       <h3 className="font-medium text-gray-900 dark:text-gray-100">
                         Settings
                       </h3>
@@ -256,17 +252,6 @@ const Header: React.FC<HeaderProps> = ({
                           </div>
                         </div>
                       )}
-                            </>
-                          );
-                        } catch (error) {
-                          console.error('Settings dropdown error:', error);
-                          return (
-                            <div className="text-red-500 text-sm">
-                              Error loading settings. Please refresh the page.
-                            </div>
-                          );
-                        }
-                      })()}
                     </div>
                   </div>
                 </>
