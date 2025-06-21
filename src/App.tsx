@@ -13,17 +13,24 @@ function App() {
   // Check if mobile on initial load
   const isMobile = window.innerWidth < 1024; // lg breakpoint
 
+  // Safe coordinate parsing with validation
+  const getInitialCenter = (): [number, number] => {
+    const lat = parseFloat(import.meta.env.VITE_MAP_CENTER_LAT || '32.3513');
+    const lon = parseFloat(import.meta.env.VITE_MAP_CENTER_LON || '-95.3011');
+    return [
+      (typeof lat === 'number' && !isNaN(lat) && isFinite(lat)) ? lat : 32.3513,
+      (typeof lon === 'number' && !isNaN(lon) && isFinite(lon)) ? lon : -95.3011
+    ];
+  };
+
   // UI state management
   const [uiState, setUIState] = useState<UIState>({
     selectedAircraft: undefined,
-    mapCenter: [
-      parseFloat(import.meta.env.VITE_MAP_CENTER_LAT || '32.3513'),
-      parseFloat(import.meta.env.VITE_MAP_CENTER_LON || '-95.3011')
-    ],
-    mapZoom: parseInt(import.meta.env.VITE_MAP_DEFAULT_ZOOM || '8', 10),
+    mapCenter: getInitialCenter(),
+    mapZoom: parseInt(import.meta.env.VITE_MAP_DEFAULT_ZOOM || '8', 10) || 8,
     sidebarOpen: !isMobile, // Start closed on mobile, open on desktop
     autoRefresh: true,
-    refreshInterval: parseInt(import.meta.env.VITE_REFRESH_INTERVAL || '15000', 10),
+    refreshInterval: parseInt(import.meta.env.VITE_REFRESH_INTERVAL || '15000', 10) || 15000,
   });
 
   // Flight data and filtering

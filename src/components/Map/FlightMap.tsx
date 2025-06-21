@@ -24,13 +24,23 @@ const DEFAULT_ZOOM = parseInt(import.meta.env.VITE_MAP_DEFAULT_ZOOM || '8', 10);
 
 // Validate and sanitize coordinates to prevent NaN issues
 function validateCoordinates(center: LatLngTuple, zoom: number): { center: LatLngTuple, zoom: number } {
-  const [lat, lng] = center;
-  const validLat = isNaN(lat) ? DEFAULT_CENTER[0] : lat;
-  const validLng = isNaN(lng) ? DEFAULT_CENTER[1] : lng;
-  const validZoom = isNaN(zoom) ? DEFAULT_ZOOM : zoom;
+  const [lat, lng] = center || [undefined, undefined];
+  
+  // More comprehensive validation
+  const validLat = (typeof lat === 'number' && !isNaN(lat) && isFinite(lat)) ? lat : DEFAULT_CENTER[0];
+  const validLng = (typeof lng === 'number' && !isNaN(lng) && isFinite(lng)) ? lng : DEFAULT_CENTER[1];
+  const validZoom = (typeof zoom === 'number' && !isNaN(zoom) && isFinite(zoom) && zoom > 0) ? zoom : DEFAULT_ZOOM;
+  
+  // Log when we fall back to defaults (for debugging)
+  if (lat !== validLat || lng !== validLng || zoom !== validZoom) {
+    console.warn('🗺️ Invalid coordinates detected, using defaults:', {
+      original: { lat, lng, zoom },
+      validated: { lat: validLat, lng: validLng, zoom: validZoom }
+    });
+  }
   
   return {
-    center: [validLat, validLng],
+    center: [validLat, validLng] as LatLngTuple,
     zoom: validZoom
   };
 }
@@ -157,14 +167,22 @@ const FlightMap: React.FC<FlightMapProps> = ({
   // Validate coordinates before passing to MapContainer
   const { center: validCenter, zoom: validZoom } = validateCoordinates(center, zoom);
 
+  // Double-check coordinates one more time before rendering
+  const finalCenter: LatLngTuple = [
+    typeof validCenter[0] === 'number' && !isNaN(validCenter[0]) ? validCenter[0] : DEFAULT_CENTER[0],
+    typeof validCenter[1] === 'number' && !isNaN(validCenter[1]) ? validCenter[1] : DEFAULT_CENTER[1]
+  ];
+  const finalZoom = typeof validZoom === 'number' && !isNaN(validZoom) && validZoom > 0 ? validZoom : DEFAULT_ZOOM;
+
   return (
     <div className="h-full w-full relative">
       <MapContainer
-        center={validCenter}
-        zoom={validZoom}
+        center={finalCenter}
+        zoom={finalZoom}
         style={{ height: '100%', width: '100%' }}
         zoomControl={false}
         ref={mapRef}
+        key={`map-${finalCenter[0]}-${finalCenter[1]}-${finalZoom}`}
       >
         {/* Map tiles */}
         <TileLayer
@@ -201,8 +219,8 @@ const FlightMap: React.FC<FlightMapProps> = ({
         {/* Map controller for selected aircraft */}
         <MapController
           selectedAircraft={selectedAircraft}
-          center={validCenter}
-          zoom={validZoom}
+          center={finalCenter}
+          zoom={finalZoom}
         />
       </MapContainer>
 
