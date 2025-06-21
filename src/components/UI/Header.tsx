@@ -172,6 +172,10 @@ const Header: React.FC<HeaderProps> = ({
                   
                   <div className="absolute right-0 top-full mt-2 w-64 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-[9001]">
                     <div className="p-4 space-y-3">
+                      {(() => {
+                        try {
+                          return (
+                            <>
                       <h3 className="font-medium text-gray-900 dark:text-gray-100">
                         Settings
                       </h3>
@@ -234,20 +238,35 @@ const Header: React.FC<HeaderProps> = ({
                           <div className="flex justify-between">
                             <span className="text-gray-600 dark:text-gray-400">Uptime:</span>
                             <span className="font-mono text-xs">
-                              {Math.round(systemStatus.uptime / 3600)}h
+                              {systemStatus.uptime && typeof systemStatus.uptime === 'number' 
+                                ? `${Math.round(systemStatus.uptime / 3600)}h`
+                                : 'N/A'}
                             </span>
                           </div>
                           
                           <div className="flex justify-between">
                             <span className="text-gray-600 dark:text-gray-400">Refresh:</span>
                             <span className="text-xs">
-                              {refreshInterval >= 60000 
-                                ? `${refreshInterval / 60000}m` 
-                                : `${refreshInterval / 1000}s`}
+                              {typeof refreshInterval === 'number' && !isNaN(refreshInterval)
+                                ? (refreshInterval >= 60000 
+                                  ? `${refreshInterval / 60000}m` 
+                                  : `${refreshInterval / 1000}s`)
+                                : 'N/A'}
                             </span>
                           </div>
                         </div>
                       )}
+                            </>
+                          );
+                        } catch (error) {
+                          console.error('Settings dropdown error:', error);
+                          return (
+                            <div className="text-red-500 text-sm">
+                              Error loading settings. Please refresh the page.
+                            </div>
+                          );
+                        }
+                      })()}
                     </div>
                   </div>
                 </>
