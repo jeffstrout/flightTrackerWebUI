@@ -196,6 +196,9 @@ const FlightMap: React.FC<FlightMapProps> = ({
   ];
   const finalZoom = typeof validZoom === 'number' && !isNaN(validZoom) && validZoom > 0 ? validZoom : DEFAULT_ZOOM;
 
+  // Create a key based on aircraft count and hex list to force re-render when aircraft change
+  const aircraftKey = `aircraft-${aircraft.length}-${aircraft.map(ac => ac.hex).sort().join(',').slice(0, 100)}`;
+
   return (
     <div className="h-full w-full relative">
       <SafeMapContainer
@@ -206,54 +209,56 @@ const FlightMap: React.FC<FlightMapProps> = ({
         onMapReady={(map) => { mapRef.current = map; }}
       >
 
-        {/* Aircraft markers */}
-        {aircraft
-          .filter((ac) => {
-            // Filter out aircraft with invalid coordinates
-            const hasValidCoords = (
-              typeof ac.lat === 'number' && 
-              typeof ac.lon === 'number' && 
-              !isNaN(ac.lat) && 
-              !isNaN(ac.lon) &&
-              isFinite(ac.lat) && 
-              isFinite(ac.lon) &&
-              ac.lat >= -90 && 
-              ac.lat <= 90 &&
-              ac.lon >= -180 && 
-              ac.lon <= 180
-            );
-            
-            if (!hasValidCoords) {
-              console.warn('🗺️ Filtering out aircraft with invalid coordinates:', {
-                hex: ac.hex,
-                flight: ac.flight,
-                lat: ac.lat,
-                lon: ac.lon
-              });
-            }
-            
-            return hasValidCoords;
-          })
-          .map((ac) => {
-            // Debug logging for helicopters being passed to map
-            if (ac.icao_aircraft_class?.startsWith('H')) {
-              console.log('🗺️ FlightMap rendering helicopter:', {
-                hex: ac.hex,
-                flight: ac.flight,
-                icao_class: ac.icao_aircraft_class,
-                coordinates: [ac.lat, ac.lon]
-              });
-            }
-            
-            return (
-              <AircraftMarker
-                key={ac.hex}
-                aircraft={ac}
-                isSelected={selectedAircraft?.hex === ac.hex}
-                onClick={() => handleAircraftClick(ac.hex)}
-              />
-            );
-          })}
+        {/* Aircraft markers - wrapped with key to force re-render on filter changes */}
+        <div key={aircraftKey}>
+          {aircraft
+            .filter((ac) => {
+              // Filter out aircraft with invalid coordinates
+              const hasValidCoords = (
+                typeof ac.lat === 'number' && 
+                typeof ac.lon === 'number' && 
+                !isNaN(ac.lat) && 
+                !isNaN(ac.lon) &&
+                isFinite(ac.lat) && 
+                isFinite(ac.lon) &&
+                ac.lat >= -90 && 
+                ac.lat <= 90 &&
+                ac.lon >= -180 && 
+                ac.lon <= 180
+              );
+              
+              if (!hasValidCoords) {
+                console.warn('🗺️ Filtering out aircraft with invalid coordinates:', {
+                  hex: ac.hex,
+                  flight: ac.flight,
+                  lat: ac.lat,
+                  lon: ac.lon
+                });
+              }
+              
+              return hasValidCoords;
+            })
+            .map((ac) => {
+              // Debug logging for helicopters being passed to map
+              if (ac.icao_aircraft_class?.startsWith('H')) {
+                console.log('🗺️ FlightMap rendering helicopter:', {
+                  hex: ac.hex,
+                  flight: ac.flight,
+                  icao_class: ac.icao_aircraft_class,
+                  coordinates: [ac.lat, ac.lon]
+                });
+              }
+              
+              return (
+                <AircraftMarker
+                  key={ac.hex}
+                  aircraft={ac}
+                  isSelected={selectedAircraft?.hex === ac.hex}
+                  onClick={() => handleAircraftClick(ac.hex)}
+                />
+              );
+            })}
+        </div>
 
         {/* Map event handlers */}
         <MapEventHandler onMapStateChange={onMapStateChange} />
