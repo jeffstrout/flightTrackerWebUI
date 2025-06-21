@@ -31,9 +31,9 @@ jobs:
     - name: Build application
       run: npm run build
       env:
-        VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
-        VITE_DEFAULT_REGION: ${{ secrets.VITE_DEFAULT_REGION || 'etex' }}
-        VITE_REFRESH_INTERVAL: ${{ secrets.VITE_REFRESH_INTERVAL || '15000' }}
+        VITE_API_BASE_URL: https://api.choppertracker.com
+        VITE_DEFAULT_REGION: etex
+        VITE_REFRESH_INTERVAL: 15000
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
