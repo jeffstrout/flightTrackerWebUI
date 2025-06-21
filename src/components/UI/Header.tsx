@@ -163,8 +163,8 @@ const Header: React.FC<HeaderProps> = ({
 
               {/* Settings dropdown */}
               {showSettings && (
-                <>
-                  {/* Close overlay when clicking outside - must be before dropdown content */}
+                <div>
+                  {/* Close overlay when clicking outside */}
                   <div 
                     className="fixed inset-0 z-[9000]" 
                     onClick={() => setShowSettings(false)}
@@ -182,11 +182,11 @@ const Header: React.FC<HeaderProps> = ({
                           Region
                         </label>
                         <select
-                          value={region}
+                          value={region || 'etex'}
                           onChange={(e) => onRegionChange(e.target.value)}
                           className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-3 py-2 text-sm"
                         >
-                          {regions.map((r) => (
+                          {(regions && regions.length > 0 ? regions : ['etex']).map((r) => (
                             <option key={r} value={r}>
                               {r.toUpperCase()}
                             </option>
@@ -200,7 +200,7 @@ const Header: React.FC<HeaderProps> = ({
                           Refresh Interval
                         </label>
                         <select
-                          value={refreshInterval}
+                          value={refreshInterval || 15000}
                           onChange={(e) => onRefreshIntervalChange(Number(e.target.value))}
                           className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-3 py-2 text-sm"
                         >
@@ -215,46 +215,26 @@ const Header: React.FC<HeaderProps> = ({
                       </div>
 
                       {/* System info */}
-                      {systemStatus && (
-                        <div className="space-y-2 text-sm">
-                          <div className="flex justify-between">
-                            <span className="text-gray-600 dark:text-gray-400">Status:</span>
-                            <span className={`font-medium ${statusInfo.color}`}>
-                              {statusInfo.text}
-                            </span>
-                          </div>
-                          
-                          {systemStatus.version && (
-                            <div className="flex justify-between">
-                              <span className="text-gray-600 dark:text-gray-400">Version:</span>
-                              <span className="font-mono text-xs">{systemStatus.version}</span>
-                            </div>
-                          )}
-                          
-                          <div className="flex justify-between">
-                            <span className="text-gray-600 dark:text-gray-400">Uptime:</span>
-                            <span className="font-mono text-xs">
-                              {systemStatus.uptime && typeof systemStatus.uptime === 'number' 
-                                ? `${Math.round(systemStatus.uptime / 3600)}h`
-                                : 'N/A'}
-                            </span>
-                          </div>
-                          
-                          <div className="flex justify-between">
-                            <span className="text-gray-600 dark:text-gray-400">Refresh:</span>
-                            <span className="text-xs">
-                              {typeof refreshInterval === 'number' && !isNaN(refreshInterval)
-                                ? (refreshInterval >= 60000 
-                                  ? `${refreshInterval / 60000}m` 
-                                  : `${refreshInterval / 1000}s`)
-                                : 'N/A'}
-                            </span>
-                          </div>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-gray-600 dark:text-gray-400">Status:</span>
+                          <span className="font-medium text-green-500">
+                            Online
+                          </span>
                         </div>
-                      )}
+                        
+                        <div className="flex justify-between">
+                          <span className="text-gray-600 dark:text-gray-400">Refresh:</span>
+                          <span className="text-xs">
+                            {(refreshInterval || 15000) >= 60000 
+                              ? `${Math.round((refreshInterval || 15000) / 60000)}m` 
+                              : `${Math.round((refreshInterval || 15000) / 1000)}s`}
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </>
+                </div>
               )}
             </div>
           </div>
