@@ -17,10 +17,23 @@ interface FlightMapProps {
 
 // Default center coordinates (from environment or Tyler, TX)
 const DEFAULT_CENTER: LatLngTuple = [
-  Number(import.meta.env.VITE_MAP_CENTER_LAT) || 32.3513,
-  Number(import.meta.env.VITE_MAP_CENTER_LON) || -95.3011
+  parseFloat(import.meta.env.VITE_MAP_CENTER_LAT || '32.3513'),
+  parseFloat(import.meta.env.VITE_MAP_CENTER_LON || '-95.3011')
 ];
-const DEFAULT_ZOOM = Number(import.meta.env.VITE_MAP_DEFAULT_ZOOM) || 8;
+const DEFAULT_ZOOM = parseInt(import.meta.env.VITE_MAP_DEFAULT_ZOOM || '8', 10);
+
+// Validate and sanitize coordinates to prevent NaN issues
+function validateCoordinates(center: LatLngTuple, zoom: number): { center: LatLngTuple, zoom: number } {
+  const [lat, lng] = center;
+  const validLat = isNaN(lat) ? DEFAULT_CENTER[0] : lat;
+  const validLng = isNaN(lng) ? DEFAULT_CENTER[1] : lng;
+  const validZoom = isNaN(zoom) ? DEFAULT_ZOOM : zoom;
+  
+  return {
+    center: [validLat, validLng],
+    zoom: validZoom
+  };
+}
 
 // Calculate appropriate zoom level to show the full radius
 // Adjusted to show slightly more area (zoom out a bit from previous)
@@ -141,11 +154,14 @@ const FlightMap: React.FC<FlightMapProps> = ({
     }
   }, [regionData]);
 
+  // Validate coordinates before passing to MapContainer
+  const { center: validCenter, zoom: validZoom } = validateCoordinates(center, zoom);
+
   return (
     <div className="h-full w-full relative">
       <MapContainer
-        center={center}
-        zoom={zoom}
+        center={validCenter}
+        zoom={validZoom}
         style={{ height: '100%', width: '100%' }}
         zoomControl={false}
         ref={mapRef}
@@ -185,8 +201,8 @@ const FlightMap: React.FC<FlightMapProps> = ({
         {/* Map controller for selected aircraft */}
         <MapController
           selectedAircraft={selectedAircraft}
-          center={center}
-          zoom={zoom}
+          center={validCenter}
+          zoom={validZoom}
         />
       </MapContainer>
 

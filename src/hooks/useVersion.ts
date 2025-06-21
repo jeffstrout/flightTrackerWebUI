@@ -26,8 +26,11 @@ export const useVersion = () => {
       const response = await fetch(`/config.js?t=${Date.now()}`);
       const text = await response.text();
 
-      // Execute the config.js to load into window object
-      eval(text);
+      // Safely execute the config.js by creating a script element
+      const script = document.createElement('script');
+      script.textContent = text;
+      document.head.appendChild(script);
+      document.head.removeChild(script);
       
       // Get version info from the loaded config
       const versionInfo = window.FLIGHT_TRACKER_CONFIG?.VERSION;
@@ -47,6 +50,15 @@ export const useVersion = () => {
       }
     } catch (error) {
       console.error('Failed to fetch version:', error);
+      // Set a fallback version to prevent app crash
+      setVersion({
+        version: '1.0.1',
+        commit: 'unknown',
+        branch: 'main',
+        clean: false,
+        buildTime: new Date().toISOString(),
+        environment: 'production'
+      });
     }
   };
 

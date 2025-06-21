@@ -17,13 +17,13 @@ function App() {
   const [uiState, setUIState] = useState<UIState>({
     selectedAircraft: undefined,
     mapCenter: [
-      Number(import.meta.env.VITE_MAP_CENTER_LAT) || 32.3513,
-      Number(import.meta.env.VITE_MAP_CENTER_LON) || -95.3011
+      parseFloat(import.meta.env.VITE_MAP_CENTER_LAT || '32.3513'),
+      parseFloat(import.meta.env.VITE_MAP_CENTER_LON || '-95.3011')
     ],
-    mapZoom: Number(import.meta.env.VITE_MAP_DEFAULT_ZOOM) || 8,
+    mapZoom: parseInt(import.meta.env.VITE_MAP_DEFAULT_ZOOM || '8', 10),
     sidebarOpen: !isMobile, // Start closed on mobile, open on desktop
     autoRefresh: true,
-    refreshInterval: Number(import.meta.env.VITE_REFRESH_INTERVAL) || 15000,
+    refreshInterval: parseInt(import.meta.env.VITE_REFRESH_INTERVAL || '15000', 10),
   });
 
   // Flight data and filtering
