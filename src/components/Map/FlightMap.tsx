@@ -96,16 +96,34 @@ function MapController({
 }) {
   const map = useMap();
   const lastSelectedRef = useRef<string | undefined>();
+  const timeoutRef = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
+    // Clear any pending timeout
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
     // Center on selected aircraft if it changed
     if (selectedAircraft && selectedAircraft.hex !== lastSelectedRef.current) {
-      map.setView([selectedAircraft.lat, selectedAircraft.lon], Math.max(zoom, 10), {
-        animate: true,
-        duration: 1,
-      });
-      lastSelectedRef.current = selectedAircraft.hex;
+      // Small delay to prevent race conditions with manual map movements
+      timeoutRef.current = setTimeout(() => {
+        map.setView([selectedAircraft.lat, selectedAircraft.lon], Math.max(zoom, 10), {
+          animate: true,
+          duration: 1,
+        });
+        lastSelectedRef.current = selectedAircraft.hex;
+      }, 100);
+    } else if (!selectedAircraft) {
+      // Clear the reference when aircraft is deselected
+      lastSelectedRef.current = undefined;
     }
+
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
   }, [selectedAircraft, map, zoom]);
 
   return null;
@@ -147,6 +165,9 @@ const FlightMap: React.FC<FlightMapProps> = ({
 
   const handleGoHome = useCallback(() => {
     if (mapRef.current) {
+      // Clear selected aircraft first to prevent MapController interference
+      onAircraftSelect(undefined);
+      
       // Use region data if available, otherwise fall back to defaults
       const homeCenter: LatLngTuple = regionData?.center 
         ? [regionData.center.lat, regionData.center.lon]
@@ -163,7 +184,7 @@ const FlightMap: React.FC<FlightMapProps> = ({
         duration: 1.0,
       });
     }
-  }, [regionData]);
+  }, [regionData, onAircraftSelect]);
 
   // Validate coordinates before passing to MapContainer
   const { center: validCenter, zoom: validZoom } = validateCoordinates(center, zoom);
