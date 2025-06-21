@@ -186,26 +186,53 @@ const FlightMap: React.FC<FlightMapProps> = ({
       >
 
         {/* Aircraft markers */}
-        {aircraft.map((ac) => {
-          // Debug logging for helicopters being passed to map
-          if (ac.icao_aircraft_class?.startsWith('H')) {
-            console.log('🗺️ FlightMap rendering helicopter:', {
-              hex: ac.hex,
-              flight: ac.flight,
-              icao_class: ac.icao_aircraft_class,
-              coordinates: [ac.lat, ac.lon]
-            });
-          }
-          
-          return (
-            <AircraftMarker
-              key={ac.hex}
-              aircraft={ac}
-              isSelected={selectedAircraft?.hex === ac.hex}
-              onClick={() => handleAircraftClick(ac.hex)}
-            />
-          );
-        })}
+        {aircraft
+          .filter((ac) => {
+            // Filter out aircraft with invalid coordinates
+            const hasValidCoords = (
+              typeof ac.lat === 'number' && 
+              typeof ac.lon === 'number' && 
+              !isNaN(ac.lat) && 
+              !isNaN(ac.lon) &&
+              isFinite(ac.lat) && 
+              isFinite(ac.lon) &&
+              ac.lat >= -90 && 
+              ac.lat <= 90 &&
+              ac.lon >= -180 && 
+              ac.lon <= 180
+            );
+            
+            if (!hasValidCoords) {
+              console.warn('🗺️ Filtering out aircraft with invalid coordinates:', {
+                hex: ac.hex,
+                flight: ac.flight,
+                lat: ac.lat,
+                lon: ac.lon
+              });
+            }
+            
+            return hasValidCoords;
+          })
+          .map((ac) => {
+            // Debug logging for helicopters being passed to map
+            if (ac.icao_aircraft_class?.startsWith('H')) {
+              console.log('🗺️ FlightMap rendering helicopter:', {
+                hex: ac.hex,
+                flight: ac.flight,
+                icao_class: ac.icao_aircraft_class,
+                coordinates: [ac.lat, ac.lon]
+              });
+            }
+            
+            return (
+              <AircraftMarker
+                key={ac.hex}
+                aircraft={ac}
+                isSelected={selectedAircraft?.hex === ac.hex}
+                onClick={() => handleAircraftClick(ac.hex)}
+              />
+            );
+          })}
 
         {/* Map event handlers */}
         <MapEventHandler onMapStateChange={onMapStateChange} />

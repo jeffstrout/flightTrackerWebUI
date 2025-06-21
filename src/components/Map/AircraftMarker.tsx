@@ -67,6 +67,31 @@ const AircraftMarker: React.FC<AircraftMarkerProps> = ({
   isSelected, 
   onClick 
 }) => {
+  // Validate coordinates before creating position
+  const hasValidCoordinates = (
+    typeof aircraft.lat === 'number' && 
+    typeof aircraft.lon === 'number' && 
+    !isNaN(aircraft.lat) && 
+    !isNaN(aircraft.lon) &&
+    isFinite(aircraft.lat) && 
+    isFinite(aircraft.lon) &&
+    aircraft.lat >= -90 && 
+    aircraft.lat <= 90 &&
+    aircraft.lon >= -180 && 
+    aircraft.lon <= 180
+  );
+
+  // Don't render marker if coordinates are invalid
+  if (!hasValidCoordinates) {
+    console.warn('🗺️ Skipping aircraft with invalid coordinates:', {
+      hex: aircraft.hex,
+      flight: aircraft.flight,
+      lat: aircraft.lat,
+      lon: aircraft.lon
+    });
+    return null;
+  }
+
   const position: LatLngExpression = [aircraft.lat, aircraft.lon];
   
   // Debug logging for helicopters
