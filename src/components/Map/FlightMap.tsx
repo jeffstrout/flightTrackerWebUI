@@ -148,7 +148,6 @@ const FlightMap: React.FC<FlightMapProps> = ({
 
   // Handle aircraft marker click
   const handleAircraftClick = useCallback((hex: string) => {
-    console.log('✈️ FlightMap handleAircraftClick called with hex:', hex);
     onAircraftSelect(hex);
   }, [onAircraftSelect]);
 
@@ -279,7 +278,7 @@ const FlightMap: React.FC<FlightMapProps> = ({
       </SafeMapContainer>
 
       {/* Map Controls */}
-      <div className="absolute top-4 right-4 z-[1000] flex flex-col space-y-1">
+      <div className="absolute top-4 right-4 flex flex-col space-y-1" style={{ zIndex: 9000 }}>
         {/* Zoom In */}
         <button
           onClick={handleZoomIn}
@@ -315,7 +314,7 @@ const FlightMap: React.FC<FlightMapProps> = ({
       </div>
 
       {/* Aircraft count overlay */}
-      <div className="absolute bottom-4 left-4 z-1000 bg-white dark:bg-gray-800 rounded-lg shadow-lg px-3 py-2 border border-gray-200 dark:border-gray-700">
+      <div className="absolute bottom-4 left-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg px-3 py-2 border border-gray-200 dark:border-gray-700" style={{ zIndex: 9000 }}>
         <div className="flex items-center space-x-2 text-sm">
           <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
           <span className="text-gray-700 dark:text-gray-300 font-medium">
@@ -325,11 +324,8 @@ const FlightMap: React.FC<FlightMapProps> = ({
       </div>
 
       {/* Selected aircraft info overlay */}
-      {selectedAircraft && (() => {
-        console.log('🎨 Rendering selected aircraft overlay:', selectedAircraft);
-        return true;
-      })() && (
-        <div className="absolute top-4 left-4 z-1000 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 max-w-sm">
+      {selectedAircraft && (
+        <div className="absolute top-4 left-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 max-w-sm" style={{ zIndex: 10000 }}>
           <div className="p-4">
             <div className="flex items-start justify-between mb-2">
               <div>

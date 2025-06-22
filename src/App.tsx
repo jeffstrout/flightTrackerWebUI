@@ -66,12 +66,7 @@ function App() {
 
   // Handle aircraft selection
   const handleAircraftSelect = (hex?: string) => {
-    console.log('🎯 App handleAircraftSelect called with hex:', hex);
-    setUIState(prev => {
-      const newState = { ...prev, selectedAircraft: hex };
-      console.log('🎯 App state updated, selectedAircraft:', newState.selectedAircraft);
-      return newState;
-    });
+    setUIState(prev => ({ ...prev, selectedAircraft: hex }));
   };
 
   // Handle map state changes
@@ -93,19 +88,6 @@ function App() {
   const selectedAircraftData = filteredAircraft.find(
     ac => ac.hex === uiState.selectedAircraft
   );
-  
-  // Debug selected aircraft
-  React.useEffect(() => {
-    if (uiState.selectedAircraft) {
-      console.log('🔍 Looking for selected aircraft:', uiState.selectedAircraft);
-      console.log('📊 Filtered aircraft count:', filteredAircraft.length);
-      console.log('🎯 Found selected aircraft data:', selectedAircraftData);
-      if (!selectedAircraftData) {
-        console.log('❌ Selected aircraft not found in filtered list!');
-        console.log('📋 Available aircraft hex codes:', filteredAircraft.map(ac => ac.hex).slice(0, 10));
-      }
-    }
-  }, [uiState.selectedAircraft, selectedAircraftData, filteredAircraft]);
 
   return (
     <div className="h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
