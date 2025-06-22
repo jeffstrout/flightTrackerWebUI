@@ -119,7 +119,14 @@ const AircraftMarker: React.FC<AircraftMarkerProps> = ({
       position={position}
       icon={icon}
       eventHandlers={{
-        click: onClick,
+        click: (e) => {
+          console.log('🖱️ Aircraft marker clicked:', {
+            hex: aircraft.hex,
+            flight: aircraft.flight,
+            position: [aircraft.lat, aircraft.lon]
+          });
+          onClick();
+        },
       }}
     />
   );

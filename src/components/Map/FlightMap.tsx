@@ -148,6 +148,7 @@ const FlightMap: React.FC<FlightMapProps> = ({
 
   // Handle aircraft marker click
   const handleAircraftClick = useCallback((hex: string) => {
+    console.log('✈️ FlightMap handleAircraftClick called with hex:', hex);
     onAircraftSelect(hex);
   }, [onAircraftSelect]);
 
@@ -324,7 +325,10 @@ const FlightMap: React.FC<FlightMapProps> = ({
       </div>
 
       {/* Selected aircraft info overlay */}
-      {selectedAircraft && (
+      {selectedAircraft && (() => {
+        console.log('🎨 Rendering selected aircraft overlay:', selectedAircraft);
+        return true;
+      })() && (
         <div className="absolute top-4 left-4 z-1000 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 max-w-sm">
           <div className="p-4">
             <div className="flex items-start justify-between mb-2">
