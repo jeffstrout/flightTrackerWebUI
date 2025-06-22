@@ -332,46 +332,87 @@ const FlightMap: React.FC<FlightMapProps> = ({
                   </p>
                 )}
               </div>
-              <button
-                onClick={() => onAircraftSelect(undefined)}
-                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
-                aria-label="Close"
-              >
-                ×
-              </button>
+              <div className="flex items-center space-x-2">
+                {selectedAircraft.on_ground && (
+                  <span className="bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 text-xs px-2 py-1 rounded-full">
+                    Ground
+                  </span>
+                )}
+                {selectedAircraft.icao_aircraft_class?.startsWith('H') && (
+                  <span className="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-xs px-2 py-1 rounded-full">
+                    Helicopter
+                  </span>
+                )}
+                {selectedAircraft.hex.toUpperCase().startsWith('AE') && (
+                  <span className="bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 text-xs px-2 py-1 rounded-full">
+                    Military
+                  </span>
+                )}
+                <button
+                  onClick={() => onAircraftSelect(undefined)}
+                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 ml-2"
+                  aria-label="Close"
+                >
+                  ×
+                </button>
+              </div>
             </div>
             
             <div className="space-y-1 text-sm">
               {selectedAircraft.model && (
-                <p className="text-gray-700 dark:text-gray-300">
-                  <span className="font-medium">Aircraft:</span> {selectedAircraft.model}
-                </p>
+                <div className="flex justify-between">
+                  <span className="text-gray-600 dark:text-gray-400">Aircraft:</span>
+                  <span className="font-medium text-gray-900 dark:text-gray-100">{selectedAircraft.model}</span>
+                </div>
               )}
               {selectedAircraft.operator && (
-                <p className="text-gray-700 dark:text-gray-300">
-                  <span className="font-medium">Operator:</span> {selectedAircraft.operator}
-                </p>
+                <div className="flex justify-between">
+                  <span className="text-gray-600 dark:text-gray-400">Operator:</span>
+                  <span className="font-medium text-gray-900 dark:text-gray-100">{selectedAircraft.operator}</span>
+                </div>
               )}
               {selectedAircraft.alt_baro && (
-                <p className="text-gray-700 dark:text-gray-300">
-                  <span className="font-medium">Altitude:</span> {selectedAircraft.alt_baro.toLocaleString()} ft
-                </p>
+                <div className="flex justify-between">
+                  <span className="text-gray-600 dark:text-gray-400">Altitude:</span>
+                  <span className="font-medium text-gray-900 dark:text-gray-100">{selectedAircraft.alt_baro.toLocaleString()} ft</span>
+                </div>
               )}
               {selectedAircraft.gs && (
-                <p className="text-gray-700 dark:text-gray-300">
-                  <span className="font-medium">Speed:</span> {Math.round(selectedAircraft.gs)} kts
-                </p>
+                <div className="flex justify-between">
+                  <span className="text-gray-600 dark:text-gray-400">Speed:</span>
+                  <span className="font-medium text-gray-900 dark:text-gray-100">{Math.round(selectedAircraft.gs)} kts</span>
+                </div>
               )}
               {selectedAircraft.track && (
-                <p className="text-gray-700 dark:text-gray-300">
-                  <span className="font-medium">Heading:</span> {Math.round(selectedAircraft.track)}°
-                </p>
+                <div className="flex justify-between">
+                  <span className="text-gray-600 dark:text-gray-400">Heading:</span>
+                  <span className="font-medium text-gray-900 dark:text-gray-100">{Math.round(selectedAircraft.track)}°</span>
+                </div>
               )}
               {selectedAircraft.distance_miles && (
-                <p className="text-gray-700 dark:text-gray-300">
-                  <span className="font-medium">Distance:</span> {selectedAircraft.distance_miles.toFixed(1)} mi
-                </p>
+                <div className="flex justify-between">
+                  <span className="text-gray-600 dark:text-gray-400">Distance:</span>
+                  <span className="font-medium text-gray-900 dark:text-gray-100">{selectedAircraft.distance_miles.toFixed(1)} mi</span>
+                </div>
               )}
+              {selectedAircraft.squawk && (
+                <div className="flex justify-between">
+                  <span className="text-gray-600 dark:text-gray-400">Squawk:</span>
+                  <span className="font-medium font-mono text-gray-900 dark:text-gray-100">{selectedAircraft.squawk}</span>
+                </div>
+              )}
+              <div className="flex justify-between">
+                <span className="text-gray-600 dark:text-gray-400">Data source:</span>
+                <span className="font-medium capitalize text-gray-900 dark:text-gray-100">{selectedAircraft.data_source}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600 dark:text-gray-400">Last seen:</span>
+                <span className="font-medium text-gray-900 dark:text-gray-100">
+                  {selectedAircraft.seen < 60 ? `${Math.round(selectedAircraft.seen)}s ago` :
+                   selectedAircraft.seen < 3600 ? `${Math.round(selectedAircraft.seen / 60)}m ago` :
+                   `${Math.round(selectedAircraft.seen / 3600)}h ago`}
+                </span>
+              </div>
             </div>
           </div>
         </div>

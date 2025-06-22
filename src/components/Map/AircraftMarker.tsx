@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Marker, Popup } from 'react-leaflet';
+import { Marker } from 'react-leaflet';
 import { DivIcon, LatLngExpression } from 'leaflet';
 import type { Aircraft } from '../../services/types';
 
@@ -114,28 +114,6 @@ const AircraftMarker: React.FC<AircraftMarkerProps> = ({
     [aircraft, isSelected]
   );
 
-  // Format aircraft details for popup
-  const formatAltitude = (alt?: number) => {
-    if (!alt) return 'Unknown';
-    return `${alt.toLocaleString()} ft`;
-  };
-
-  const formatSpeed = (speed?: number) => {
-    if (!speed) return 'Unknown';
-    return `${Math.round(speed)} kts`;
-  };
-
-  const formatHeading = (track?: number) => {
-    if (!track) return 'Unknown';
-    return `${Math.round(track)}°`;
-  };
-
-  const formatLastSeen = (seen: number) => {
-    if (seen < 60) return `${Math.round(seen)}s ago`;
-    if (seen < 3600) return `${Math.round(seen / 60)}m ago`;
-    return `${Math.round(seen / 3600)}h ago`;
-  };
-
   return (
     <Marker
       position={position}
@@ -143,102 +121,7 @@ const AircraftMarker: React.FC<AircraftMarkerProps> = ({
       eventHandlers={{
         click: onClick,
       }}
-    >
-      <Popup
-        closeButton={false}
-        className="aircraft-popup"
-        offset={[0, -10]}
-      >
-        <div className="p-2 min-w-64">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="font-semibold text-lg text-gray-900">
-              {aircraft.flight || aircraft.hex.toUpperCase()}
-            </h3>
-            <div className="flex items-center space-x-2">
-              {aircraft.on_ground && (
-                <span className="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">
-                  Ground
-                </span>
-              )}
-              {aircraft.icao_aircraft_class?.startsWith('H') && (
-                <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
-                  Helicopter
-                </span>
-              )}
-              {aircraft.hex.toUpperCase().startsWith('AE') && (
-                <span className="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">
-                  Military
-                </span>
-              )}
-            </div>
-          </div>
-
-          {/* Aircraft details */}
-          <div className="space-y-1 text-sm">
-            {aircraft.registration && (
-              <div className="flex justify-between">
-                <span className="text-gray-600">Registration:</span>
-                <span className="font-medium">{aircraft.registration}</span>
-              </div>
-            )}
-            
-            {aircraft.model && (
-              <div className="flex justify-between">
-                <span className="text-gray-600">Aircraft:</span>
-                <span className="font-medium">{aircraft.model}</span>
-              </div>
-            )}
-            
-            {aircraft.operator && (
-              <div className="flex justify-between">
-                <span className="text-gray-600">Operator:</span>
-                <span className="font-medium">{aircraft.operator}</span>
-              </div>
-            )}
-            
-            <div className="flex justify-between">
-              <span className="text-gray-600">Altitude:</span>
-              <span className="font-medium">{formatAltitude(aircraft.alt_baro)}</span>
-            </div>
-            
-            <div className="flex justify-between">
-              <span className="text-gray-600">Speed:</span>
-              <span className="font-medium">{formatSpeed(aircraft.gs)}</span>
-            </div>
-            
-            <div className="flex justify-between">
-              <span className="text-gray-600">Heading:</span>
-              <span className="font-medium">{formatHeading(aircraft.track)}</span>
-            </div>
-            
-            {aircraft.distance_miles && (
-              <div className="flex justify-between">
-                <span className="text-gray-600">Distance:</span>
-                <span className="font-medium">{aircraft.distance_miles.toFixed(1)} mi</span>
-              </div>
-            )}
-            
-            {aircraft.squawk && (
-              <div className="flex justify-between">
-                <span className="text-gray-600">Squawk:</span>
-                <span className="font-medium font-mono">{aircraft.squawk}</span>
-              </div>
-            )}
-            
-            <div className="flex justify-between">
-              <span className="text-gray-600">Data source:</span>
-              <span className="font-medium capitalize">{aircraft.data_source}</span>
-            </div>
-            
-            <div className="flex justify-between">
-              <span className="text-gray-600">Last seen:</span>
-              <span className="font-medium">{formatLastSeen(aircraft.seen)}</span>
-            </div>
-          </div>
-        </div>
-      </Popup>
-    </Marker>
+    />
   );
 };
 
