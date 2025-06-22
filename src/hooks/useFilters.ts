@@ -78,7 +78,7 @@ export function useFilters(aircraft: Aircraft[]): UseFiltersReturn {
 
   // Apply filters to aircraft list
   const filteredAircraft = useMemo(() => {
-    return aircraft.filter((ac) => {
+    const filtered = aircraft.filter((ac) => {
       // Always exclude aircraft on ground
       if (ac.on_ground) {
         return false;
@@ -151,6 +151,28 @@ export function useFilters(aircraft: Aircraft[]): UseFiltersReturn {
       }
 
       return true;
+    });
+
+    // Sort by distance from region center (closest first)
+    // Aircraft with distance_miles come first, then those without (sorted by seen time)
+    return filtered.sort((a, b) => {
+      // Both have distance, sort by distance
+      if (a.distance_miles !== undefined && b.distance_miles !== undefined) {
+        return a.distance_miles - b.distance_miles;
+      }
+      
+      // Only a has distance, it comes first
+      if (a.distance_miles !== undefined && b.distance_miles === undefined) {
+        return -1;
+      }
+      
+      // Only b has distance, it comes first
+      if (a.distance_miles === undefined && b.distance_miles !== undefined) {
+        return 1;
+      }
+      
+      // Neither has distance, sort by last seen (most recent first)
+      return a.seen - b.seen;
     });
   }, [aircraft, filters, isHelicopter, isMilitary]);
 

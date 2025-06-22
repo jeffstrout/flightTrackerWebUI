@@ -62,9 +62,11 @@ function calculateZoomFromRadius(radiusMiles: number, latitude: number): number 
 
 // Component to handle map events and updates
 function MapEventHandler({ 
-  onMapStateChange 
+  onMapStateChange,
+  onMapClick
 }: { 
-  onMapStateChange: (center: LatLngTuple, zoom: number) => void 
+  onMapStateChange: (center: LatLngTuple, zoom: number) => void;
+  onMapClick?: () => void;
 }) {
   const map = useMap();
 
@@ -78,6 +80,10 @@ function MapEventHandler({
       const center = map.getCenter();
       const zoom = map.getZoom();
       onMapStateChange([center.lat, center.lng], zoom);
+    },
+    click: () => {
+      // Allow clicking on map to deselect aircraft
+      onMapClick?.();
     },
   });
 
@@ -261,7 +267,7 @@ const FlightMap: React.FC<FlightMapProps> = ({
         </div>
 
         {/* Map event handlers */}
-        <MapEventHandler onMapStateChange={onMapStateChange} />
+        <MapEventHandler onMapStateChange={onMapStateChange} onMapClick={handleMapClick} />
         
         {/* Map controller for selected aircraft */}
         <MapController
