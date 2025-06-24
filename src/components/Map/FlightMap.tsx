@@ -90,7 +90,7 @@ function MapEventHandler({
   return null;
 }
 
-// Component to handle selected aircraft centering
+// Component to handle selected aircraft centering and tracking
 function MapController({ 
   selectedAircraft, 
   center, 
@@ -102,6 +102,7 @@ function MapController({
 }) {
   const map = useMap();
   const lastSelectedRef = useRef<string | undefined>();
+  const lastPositionRef = useRef<{ lat: number; lon: number } | undefined>();
   const timeoutRef = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
@@ -110,19 +111,32 @@ function MapController({
       clearTimeout(timeoutRef.current);
     }
 
-    // Center on selected aircraft if it changed
-    if (selectedAircraft && selectedAircraft.hex !== lastSelectedRef.current) {
-      // Small delay to prevent race conditions with manual map movements
-      timeoutRef.current = setTimeout(() => {
-        map.setView([selectedAircraft.lat, selectedAircraft.lon], Math.max(zoom, 10), {
-          animate: true,
-          duration: 1,
-        });
-        lastSelectedRef.current = selectedAircraft.hex;
-      }, 100);
-    } else if (!selectedAircraft) {
-      // Clear the reference when aircraft is deselected
+    if (selectedAircraft) {
+      const isNewSelection = selectedAircraft.hex !== lastSelectedRef.current;
+      const hasPositionChanged = lastPositionRef.current && (
+        lastPositionRef.current.lat !== selectedAircraft.lat ||
+        lastPositionRef.current.lon !== selectedAircraft.lon
+      );
+
+      // Center and zoom on newly selected aircraft or track position changes
+      if (isNewSelection || hasPositionChanged) {
+        timeoutRef.current = setTimeout(() => {
+          // Use higher zoom (12) for new selection, maintain current zoom for tracking
+          const targetZoom = isNewSelection ? 12 : map.getZoom();
+          
+          map.setView([selectedAircraft.lat, selectedAircraft.lon], targetZoom, {
+            animate: true,
+            duration: isNewSelection ? 1 : 0.5, // Faster animation for tracking updates
+          });
+          
+          lastSelectedRef.current = selectedAircraft.hex;
+          lastPositionRef.current = { lat: selectedAircraft.lat, lon: selectedAircraft.lon };
+        }, 100);
+      }
+    } else {
+      // Clear the references when aircraft is deselected
       lastSelectedRef.current = undefined;
+      lastPositionRef.current = undefined;
     }
 
     return () => {
@@ -130,7 +144,7 @@ function MapController({
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [selectedAircraft, map, zoom]);
+  }, [selectedAircraft, map]);
 
   return null;
 }
