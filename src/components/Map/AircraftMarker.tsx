@@ -15,8 +15,8 @@ const createAircraftIcon = (aircraft: Aircraft, isSelected: boolean): DivIcon =>
   const isMilitary = aircraft.hex.toUpperCase().startsWith('AE');
   const isOnGround = aircraft.on_ground;
   
-  // Helicopters use red, other aircraft use blue
-  let color = isHelicopter ? '#ef4444' : '#3b82f6'; // Red for helicopters, blue for others
+  // All icons use blue color
+  let color = '#3b82f6'; // Blue for all aircraft
   
   // Scale and opacity based on selection and age
   const scale = isSelected ? 1.3 : 1.0;

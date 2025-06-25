@@ -49,7 +49,7 @@
   }
   
   .helicopter-blades {
-    animation: rotate-blades 0.1s linear infinite;
+    animation: rotate-blades 0.5s linear infinite;
     transform-origin: center;
   }
   
