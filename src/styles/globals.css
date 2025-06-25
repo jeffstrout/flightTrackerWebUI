@@ -33,8 +33,24 @@
     @apply transform-gpu transition-transform duration-300 ease-out;
   }
   
+  /* Removed pulse animation to prevent fading */
   .aircraft-marker.moving {
-    @apply animate-pulse-slow;
+    /* No animation */
+  }
+  
+  /* Helicopter rotor animation */
+  @keyframes rotate-blades {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  .helicopter-blades {
+    animation: rotate-blades 0.1s linear infinite;
+    transform-origin: center;
   }
   
   /* Custom scrollbar */

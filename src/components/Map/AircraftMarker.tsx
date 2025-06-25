@@ -15,8 +15,8 @@ const createAircraftIcon = (aircraft: Aircraft, isSelected: boolean): DivIcon =>
   const isMilitary = aircraft.hex.toUpperCase().startsWith('AE');
   const isOnGround = aircraft.on_ground;
   
-  // All icons use blue color
-  let color = '#3b82f6'; // Blue for all aircraft
+  // Helicopters use red, other aircraft use blue
+  let color = isHelicopter ? '#ef4444' : '#3b82f6'; // Red for helicopters, blue for others
   
   // Scale and opacity based on selection and age
   const scale = isSelected ? 1.3 : 1.0;
@@ -27,11 +27,13 @@ const createAircraftIcon = (aircraft: Aircraft, isSelected: boolean): DivIcon =>
   
   // Create SVG icon
   const svgIcon = isHelicopter ? 
-    // Helicopter icon - X-shaped rotor blades
+    // Helicopter icon - X-shaped rotor blades with animation
     `<svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" style="transform: rotate(${rotation}deg) scale(${scale}); opacity: ${opacity};">
-      <!-- Main rotor blades - X shape -->
-      <line x1="15" y1="15" x2="45" y2="45" stroke="${color}" stroke-width="4" stroke-linecap="round"/>
-      <line x1="45" y1="15" x2="15" y2="45" stroke="${color}" stroke-width="4" stroke-linecap="round"/>
+      <!-- Main rotor blades - X shape with animation -->
+      <g class="helicopter-blades">
+        <line x1="15" y1="15" x2="45" y2="45" stroke="${color}" stroke-width="4" stroke-linecap="round"/>
+        <line x1="45" y1="15" x2="15" y2="45" stroke="${color}" stroke-width="4" stroke-linecap="round"/>
+      </g>
       <!-- Center hub -->
       <circle cx="30" cy="30" r="6" fill="${color}"/>
       <!-- Tail boom -->
