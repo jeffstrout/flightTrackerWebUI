@@ -70,6 +70,17 @@ const Sidebar: React.FC<SidebarProps> = ({
           {/* Filter buttons */}
           <div className="flex gap-1 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
             <button
+              onClick={() => onFiltersChange({ ...filters, helicopters_only: true })}
+              className={`flex-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                filters.helicopters_only
+                  ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 shadow-sm'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
+              }`}
+            >
+              Helicopters
+            </button>
+            
+            <button
               onClick={() => onFiltersChange({ ...filters, helicopters_only: false })}
               className={`flex-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                 !filters.helicopters_only
@@ -78,17 +89,6 @@ const Sidebar: React.FC<SidebarProps> = ({
               }`}
             >
               All Aircraft
-            </button>
-            
-            <button
-              onClick={() => onFiltersChange({ ...filters, helicopters_only: true })}
-              className={`flex-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                filters.helicopters_only
-                  ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 shadow-sm'
-                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
-              }`}
-            >
-              Helicopters Only
             </button>
           </div>
 

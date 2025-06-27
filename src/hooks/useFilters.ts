@@ -25,7 +25,7 @@ const defaultFilters: FlightFilters = {
   distance_max: undefined,
   on_ground: undefined,
   data_source: [],
-  helicopters_only: false,
+  helicopters_only: true,
   military_only: false,
 };
 
