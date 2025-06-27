@@ -19,8 +19,6 @@ interface HeaderProps {
   onRegionChange: (region: string) => void;
   onToggleSidebar: () => void;
   systemStatus?: SystemStatus | null;
-  refreshInterval: number;
-  onRefreshIntervalChange: (interval: number) => void;
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -28,8 +26,6 @@ const Header: React.FC<HeaderProps> = ({
   onRegionChange,
   onToggleSidebar,
   systemStatus,
-  refreshInterval,
-  onRefreshIntervalChange,
 }) => {
   const [regions, setRegions] = useState<string[]>(['etex']); // Default regions
   const [showSettings, setShowSettings] = useState(false);
@@ -196,26 +192,6 @@ const Header: React.FC<HeaderProps> = ({
                         </select>
                       </div>
 
-                      {/* Refresh interval setting */}
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                          Refresh Interval
-                        </label>
-                        <select
-                          value={refreshInterval || 15000}
-                          onChange={(e) => onRefreshIntervalChange(Number(e.target.value))}
-                          className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-3 py-2 text-sm"
-                        >
-                          <option value={5000}>5 seconds</option>
-                          <option value={10000}>10 seconds</option>
-                          <option value={15000}>15 seconds</option>
-                          <option value={30000}>30 seconds</option>
-                          <option value={60000}>1 minute</option>
-                          <option value={120000}>2 minutes</option>
-                          <option value={300000}>5 minutes</option>
-                        </select>
-                      </div>
-
                       {/* System info */}
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
@@ -227,11 +203,7 @@ const Header: React.FC<HeaderProps> = ({
                         
                         <div className="flex justify-between">
                           <span className="text-gray-600 dark:text-gray-400">Refresh:</span>
-                          <span className="text-xs">
-                            {(refreshInterval || 15000) >= 60000 
-                              ? `${Math.round((refreshInterval || 15000) / 60000)}m` 
-                              : `${Math.round((refreshInterval || 15000) / 1000)}s`}
-                          </span>
+                          <span className="text-xs">3s</span>
                         </div>
                         
                         {/* Version info */}

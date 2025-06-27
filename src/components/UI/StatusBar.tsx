@@ -45,7 +45,6 @@ const StatusBar: React.FC<StatusBarProps> = ({
     visible: aircraft.length,
     total: totalAircraft.length,
     helicopters: totalAircraft.filter(ac => ac.icao_aircraft_class?.startsWith('H')).length,
-    airplanes: totalAircraft.filter(ac => !ac.icao_aircraft_class?.startsWith('H')).length,
     onGround: 0, // Always 0 since ground aircraft are filtered out
     avgAltitude: aircraft.length > 0 
       ? Math.round(aircraft.reduce((sum, ac) => sum + (ac.alt_baro || 0), 0) / aircraft.length)
@@ -100,15 +99,6 @@ const StatusBar: React.FC<StatusBarProps> = ({
 
         {/* Center section - Aircraft statistics */}
         <div className="hidden md:flex items-center space-x-6">
-          {/* Airplanes */}
-          <div className="flex items-center space-x-1">
-            <Plane className="text-blue-500" size={16} />
-            <span className="text-gray-700 dark:text-gray-300 font-medium">
-              {stats.airplanes}
-            </span>
-            <span className="text-gray-600 dark:text-gray-400">airplanes</span>
-          </div>
-
           {/* Helicopters */}
           <div className="flex items-center space-x-1">
             <div className="w-3 h-3 bg-green-500 rounded-full" />
@@ -116,6 +106,15 @@ const StatusBar: React.FC<StatusBarProps> = ({
               {stats.helicopters}
             </span>
             <span className="text-gray-600 dark:text-gray-400">choppers</span>
+          </div>
+
+          {/* Total */}
+          <div className="flex items-center space-x-1">
+            <Plane className="text-blue-500" size={16} />
+            <span className="text-gray-700 dark:text-gray-300 font-medium">
+              {stats.total}
+            </span>
+            <span className="text-gray-600 dark:text-gray-400">total</span>
           </div>
 
           {/* On ground */}
@@ -173,8 +172,8 @@ const StatusBar: React.FC<StatusBarProps> = ({
       {/* Mobile stats row */}
       <div className="md:hidden mt-2 flex items-center justify-between text-xs text-gray-600 dark:text-gray-400">
         <div className="flex items-center space-x-3">
-          <span>{stats.airplanes} airplanes</span>
           <span>{stats.helicopters} choppers</span>
+          <span>{stats.total} total</span>
         </div>
       </div>
     </div>

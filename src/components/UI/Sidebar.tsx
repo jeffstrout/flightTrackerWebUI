@@ -98,21 +98,21 @@ const Sidebar: React.FC<SidebarProps> = ({
           <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
             <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-2">
               <div className="flex items-center space-x-1">
-                <Plane size={14} className="text-blue-500" />
-                <span className="text-gray-600 dark:text-gray-400">Total</span>
-              </div>
-              <div className="font-semibold text-gray-900 dark:text-gray-100">
-                {stats.total}
-              </div>
-            </div>
-            
-            <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-2">
-              <div className="flex items-center space-x-1">
                 <div className="w-3 h-3 bg-green-500 rounded-full" />
                 <span className="text-gray-600 dark:text-gray-400">Helicopters</span>
               </div>
               <div className="font-semibold text-gray-900 dark:text-gray-100">
                 {stats.helicopters}
+              </div>
+            </div>
+            
+            <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-2">
+              <div className="flex items-center space-x-1">
+                <Plane size={14} className="text-blue-500" />
+                <span className="text-gray-600 dark:text-gray-400">Total</span>
+              </div>
+              <div className="font-semibold text-gray-900 dark:text-gray-100">
+                {stats.total}
               </div>
             </div>
           </div>
@@ -133,7 +133,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
             <div className="flex items-center space-x-1">
               <Clock size={12} />
-              <span>Auto-refresh: 15s</span>
+              <span>Auto-refresh: 3s</span>
             </div>
             <div>
               Showing {aircraft.length} flights
