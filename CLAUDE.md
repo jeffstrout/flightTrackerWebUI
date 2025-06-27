@@ -1,7 +1,7 @@
 # Flight Tracker Web UI - Project Overview
 
 ## Purpose
-A responsive web interface for visualizing real-time flight data collected by the Flight Tracker Collector service. Provides an interactive map-based dashboard with advanced filtering, search, and configurable auto-refresh capabilities. Optimized for production use with ground aircraft filtering and clean UI design.
+A responsive web interface for visualizing real-time flight data collected by the Flight Tracker Collector service. Provides an interactive map-based dashboard with advanced filtering, search, and configurable auto-refresh capabilities. Optimized for production use with ground aircraft filtering and clean UI design. Now branded as "Chopper Tracker" with helicopters as the default view.
 
 ## 🚀 Current Production Status
 - **Live URL**: http://flight-tracker-web-ui-1750266711.s3-website-us-east-1.amazonaws.com
@@ -113,8 +113,8 @@ src/
 │   │   ├── AircraftPopup.tsx      # Aircraft info popup
 │   │   └── MapControls.tsx        # Zoom, layers, etc.
 │   ├── UI/
-│   │   ├── Header.tsx             # App header with settings menu and refresh controls
-│   │   ├── Sidebar.tsx            # Flight list and filters
+│   │   ├── Header.tsx             # App header with settings menu, version info, and refresh controls
+│   │   ├── Sidebar.tsx            # Flight list with helicopter-first toggle and unified stats
 │   │   ├── StatusBar.tsx          # Optimized connection status and flight stats
 │   │   └── FilterPanel.tsx        # Flight filtering controls
 │   └── Aircraft/
@@ -144,16 +144,19 @@ src/
 - **Flight Paths**: Optional trail showing aircraft movement history
 - **Clustering**: Aircraft clustering at high zoom levels for performance
 - **Layer Controls**: Toggle between map styles, weather overlays
+- **Fit All Aircraft**: New map control button to automatically fit all visible aircraft in view
 
 #### User Interface Features
 - **Region Selection**: Switch between configured collector regions
 - **Smart Flight Filtering**: Automatic ground aircraft exclusion plus manual filters
+- **Helicopter-First Design**: Helicopters are now the default view with prominent toggle
 - **Search**: Find specific flights by callsign or registration
 - **Aircraft Details**: Popup with comprehensive aircraft information
 - **Configurable Auto-refresh**: User-selectable refresh intervals (5s, 10s, 15s, 30s, 1m, 2m, 5m)
-- **Settings Menu**: Gear icon providing access to refresh interval configuration
+- **Settings Menu**: Gear icon providing access to refresh interval configuration and version info
 - **Connection Status**: Shows online/offline status to collector API
 - **Auto Dark Mode**: Automatically follows system theme preferences
+- **Unified Statistics**: Aircraft counts always show total region data regardless of active filter
 
 #### Responsive Design Features
 - **Mobile Navigation**: Collapsible sidebar, touch-optimized controls
@@ -308,6 +311,10 @@ aws s3 sync dist/ s3://flight-tracker-web-ui-1750266711 --delete
 ✅ **AWS Infrastructure**: Complete production deployment with cost optimization  
 ✅ **GitHub Actions CI/CD**: Automatic deployment pipeline  
 ✅ **Performance Monitoring**: AWS CloudWatch and budget alerts  
+✅ **Helicopter-First UI**: Default view shows helicopters with reordered toggle buttons  
+✅ **Fit All Aircraft Button**: Map control to show all aircraft in region at once  
+✅ **Version Info in Settings**: Build version and hash moved to gear menu  
+✅ **Unified Statistics Display**: Total aircraft counts shown regardless of filter state  
 
 ### Cost Optimization Results
 - **Original Estimate**: ~$65/month

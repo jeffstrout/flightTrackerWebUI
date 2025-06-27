@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import flightAPI from '../../services/api';
 import type { SystemStatus } from '../../services/types';
+import { useVersion } from '../../hooks/useVersion';
 
 interface HeaderProps {
   region: string;
@@ -32,6 +33,7 @@ const Header: React.FC<HeaderProps> = ({
 }) => {
   const [regions, setRegions] = useState<string[]>(['etex']); // Default regions
   const [showSettings, setShowSettings] = useState(false);
+  const { version } = useVersion();
 
   // Load available regions from API
   useEffect(() => {
@@ -231,6 +233,24 @@ const Header: React.FC<HeaderProps> = ({
                               : `${Math.round((refreshInterval || 15000) / 1000)}s`}
                           </span>
                         </div>
+                        
+                        {/* Version info */}
+                        {version && (
+                          <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
+                            <div className="flex justify-between">
+                              <span className="text-gray-600 dark:text-gray-400">Version:</span>
+                              <span className="text-xs font-mono">
+                                v{version.version}
+                              </span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-gray-600 dark:text-gray-400">Build:</span>
+                              <span className="text-xs font-mono">
+                                {version.commit.substring(0, 7)}
+                              </span>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>

@@ -11,6 +11,7 @@ import type { Aircraft, FlightFilters } from '../../services/types';
 interface SidebarProps {
   isOpen: boolean;
   aircraft: Aircraft[];
+  totalAircraft: Aircraft[];
   selectedAircraft?: string;
   onAircraftSelect: (hex?: string) => void;
   filters: FlightFilters;
@@ -21,6 +22,7 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({
   isOpen,
   aircraft,
+  totalAircraft,
   selectedAircraft,
   onAircraftSelect,
   filters,
@@ -28,12 +30,12 @@ const Sidebar: React.FC<SidebarProps> = ({
   onClose,
 }) => {
 
-  // Calculate statistics
+  // Calculate statistics from total aircraft (unfiltered)
   const stats = {
-    total: aircraft.length,
-    helicopters: aircraft.filter(ac => ac.icao_aircraft_class?.startsWith('H')).length,
-    military: aircraft.filter(ac => ac.hex.toUpperCase().startsWith('AE')).length,
-    onGround: aircraft.filter(ac => ac.on_ground).length,
+    total: totalAircraft.length,
+    helicopters: totalAircraft.filter(ac => ac.icao_aircraft_class?.startsWith('H')).length,
+    military: totalAircraft.filter(ac => ac.hex.toUpperCase().startsWith('AE')).length,
+    onGround: totalAircraft.filter(ac => ac.on_ground).length,
   };
 
   return (

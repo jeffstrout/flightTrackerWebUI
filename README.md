@@ -1,6 +1,6 @@
-# Flight Tracker Web UI
+# Flight Tracker Web UI (Chopper Tracker)
 
-A responsive web interface for visualizing real-time flight data collected by the Flight Tracker Collector service. Built with React, TypeScript, and Leaflet for interactive mapping with advanced filtering and real-time updates.
+A responsive web interface for visualizing real-time flight data collected by the Flight Tracker Collector service. Built with React, TypeScript, and Leaflet for interactive mapping with advanced filtering and real-time updates. Now featuring helicopter-first design with enhanced map controls.
 
 ## 🚀 Production Deployment
 
@@ -12,11 +12,12 @@ A responsive web interface for visualizing real-time flight data collected by th
 🗺️ **Interactive Map** - OpenStreetMap-based flight visualization with custom aircraft markers  
 🔄 **Real-time Updates** - Auto-refreshing flight data with configurable intervals (5s-5m)  
 📱 **Responsive Design** - Seamless experience on desktop, tablet, and mobile devices  
-🚁 **Aircraft Filtering** - Smart filtering excludes ground aircraft automatically  
+🚁 **Helicopter-First** - Default view shows helicopters with easy toggle for all aircraft  
 🔍 **Flight Search** - Search and filter flights by callsign, registration, and more  
-📊 **Clean Statistics** - Optimized status bar showing only relevant flight data  
-⚙️ **Settings Menu** - Configurable refresh intervals via gear icon  
+📊 **Unified Statistics** - Total aircraft counts always visible regardless of active filter  
+⚙️ **Enhanced Settings** - Refresh intervals and version info accessible via gear icon  
 🌙 **Auto Dark Mode** - Follows system theme preferences  
+📍 **Fit All Button** - New map control to show all aircraft in region at once  
 
 ## 🛠️ Technology Stack
 
@@ -156,11 +157,11 @@ interface Aircraft {
 src/
 ├── components/
 │   ├── Map/
-│   │   ├── FlightMap.tsx          # Main map container
+│   │   ├── FlightMap.tsx          # Main map container with fit-all control
 │   │   └── AircraftMarker.tsx     # Aircraft markers
 │   ├── UI/
-│   │   ├── Header.tsx             # App header with settings
-│   │   ├── Sidebar.tsx            # Flight list sidebar
+│   │   ├── Header.tsx             # App header with settings and version info
+│   │   ├── Sidebar.tsx            # Flight list sidebar with helicopter toggle
 │   │   └── StatusBar.tsx          # Optimized status display
 │   └── Aircraft/
 │       ├── AircraftList.tsx       # Scrollable flight list
@@ -178,12 +179,16 @@ src/
 ### Key Features & Optimizations
 
 - **Ground Aircraft Filtering**: Automatically excludes aircraft on ground from all displays
+- **Helicopter-First Design**: Default view shows helicopters with prominent toggle controls
 - **Configurable Refresh**: User-selectable intervals from 5 seconds to 5 minutes via settings menu
 - **Optimized Status Bar**: Clean display without average altitude or unnecessary messages
 - **Interactive Map**: Click aircraft for detailed information with smooth position updates
+- **Enhanced Map Controls**: New fit-all button to show all aircraft in region view
 - **Responsive Sidebar**: Collapsible flight list with advanced search/filter capabilities
+- **Unified Statistics**: Total aircraft and helicopter counts always show region totals
 - **Performance Optimized**: Efficient rendering for hundreds of aircraft
 - **Auto Dark Mode**: Follows system theme preferences automatically
+- **Version Info**: Build version and commit hash available in settings menu
 
 ## 🚀 Deployment
 

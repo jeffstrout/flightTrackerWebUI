@@ -12,7 +12,7 @@ import type { Aircraft, SystemStatus } from '../../services/types';
 
 interface StatusBarProps {
   aircraft: Aircraft[];
-  totalAircraft: number;
+  totalAircraft: Aircraft[];
   lastUpdate: Date | null;
   isOnline: boolean;
   region: string;
@@ -40,12 +40,12 @@ const StatusBar: React.FC<StatusBarProps> = ({
     return `${Math.floor(diff / 3600)}h ago`;
   };
 
-  // Calculate statistics (using filtered aircraft only)
+  // Calculate statistics from total aircraft (unfiltered)
   const stats = {
     visible: aircraft.length,
-    total: totalAircraft,
-    helicopters: aircraft.filter(ac => ac.icao_aircraft_class?.startsWith('H')).length,
-    airplanes: aircraft.filter(ac => !ac.icao_aircraft_class?.startsWith('H')).length,
+    total: totalAircraft.length,
+    helicopters: totalAircraft.filter(ac => ac.icao_aircraft_class?.startsWith('H')).length,
+    airplanes: totalAircraft.filter(ac => !ac.icao_aircraft_class?.startsWith('H')).length,
     onGround: 0, // Always 0 since ground aircraft are filtered out
     avgAltitude: aircraft.length > 0 
       ? Math.round(aircraft.reduce((sum, ac) => sum + (ac.alt_baro || 0), 0) / aircraft.length)

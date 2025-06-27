@@ -4,7 +4,6 @@ import FlightMap from './components/Map/FlightMap';
 import Header from './components/UI/Header';
 import Sidebar from './components/UI/Sidebar';
 import StatusBar from './components/UI/StatusBar';
-import { VersionInfo } from './components/VersionInfo';
 import { useFlightData } from './hooks/useFlightData';
 import { useFilters } from './hooks/useFilters';
 import type { UIState } from './services/types';
@@ -107,6 +106,7 @@ function App() {
         <Sidebar
           isOpen={uiState.sidebarOpen}
           aircraft={filteredAircraft}
+          totalAircraft={aircraft}
           selectedAircraft={uiState.selectedAircraft}
           onAircraftSelect={handleAircraftSelect}
           filters={filters}
@@ -173,15 +173,13 @@ function App() {
       {/* Status bar */}
       <StatusBar
         aircraft={filteredAircraft}
-        totalAircraft={aircraft.length}
+        totalAircraft={aircraft}
         lastUpdate={lastUpdate}
         isOnline={!error}
         region={region}
         systemStatus={systemStatus}
       />
 
-      {/* Version info */}
-      <VersionInfo />
     </div>
   );
 }

@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 import { useMap, useMapEvents } from 'react-leaflet';
 import { LatLngTuple } from 'leaflet';
-import { Plus, Minus, Home } from 'lucide-react';
+import * as L from 'leaflet';
+import { Plus, Minus, Home, Maximize2 } from 'lucide-react';
 import SafeMapContainer from './SafeMapContainer';
 import AircraftMarker from './AircraftMarker';
 import type { Aircraft, Region } from '../../services/types';
@@ -206,6 +207,56 @@ const FlightMap: React.FC<FlightMapProps> = ({
     }
   }, [regionData, onAircraftSelect]);
 
+  const handleFitAllAircraft = useCallback(() => {
+    if (mapRef.current && aircraft.length > 0) {
+      // Clear selected aircraft first
+      onAircraftSelect(undefined);
+      
+      // Filter valid aircraft coordinates
+      const validAircraft = aircraft.filter(ac => 
+        typeof ac.lat === 'number' && 
+        typeof ac.lon === 'number' && 
+        !isNaN(ac.lat) && 
+        !isNaN(ac.lon) &&
+        isFinite(ac.lat) && 
+        isFinite(ac.lon) &&
+        ac.lat >= -90 && 
+        ac.lat <= 90 &&
+        ac.lon >= -180 && 
+        ac.lon <= 180
+      );
+
+      if (validAircraft.length === 0) {
+        console.warn('No valid aircraft positions to fit');
+        return;
+      }
+
+      // Calculate bounds
+      const lats = validAircraft.map(ac => ac.lat);
+      const lons = validAircraft.map(ac => ac.lon);
+      
+      const minLat = Math.min(...lats);
+      const maxLat = Math.max(...lats);
+      const minLon = Math.min(...lons);
+      const maxLon = Math.max(...lons);
+
+      // Create bounds with some padding
+      const bounds = L.latLngBounds(
+        [minLat - 0.1, minLon - 0.1],
+        [maxLat + 0.1, maxLon + 0.1]
+      );
+
+      console.info(`📍 Fitting ${validAircraft.length} aircraft in view`);
+      
+      mapRef.current.fitBounds(bounds, {
+        animate: true,
+        duration: 1.0,
+        maxZoom: 12, // Don't zoom in too much
+        padding: [20, 20] // Add some padding around the bounds
+      });
+    }
+  }, [aircraft, onAircraftSelect]);
+
   // Validate coordinates before passing to MapContainer
   const { center: validCenter, zoom: validZoom } = validateCoordinates(center, zoom);
 
@@ -311,6 +362,17 @@ const FlightMap: React.FC<FlightMapProps> = ({
           title="Zoom out"
         >
           <Minus size={18} className="text-gray-700 dark:text-gray-300" />
+        </button>
+
+        {/* Fit All Aircraft Button */}
+        <button
+          onClick={handleFitAllAircraft}
+          className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg p-2 shadow-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors w-10 h-10 flex items-center justify-center"
+          aria-label="Fit all aircraft in view"
+          title="Fit all aircraft in view"
+          disabled={aircraft.length === 0}
+        >
+          <Maximize2 size={16} className={`${aircraft.length === 0 ? 'text-gray-400' : 'text-gray-700 dark:text-gray-300'}`} />
         </button>
 
         {/* Divider */}
