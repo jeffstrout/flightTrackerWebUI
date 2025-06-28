@@ -140,8 +140,11 @@ export function useFilters(aircraft: Aircraft[]): UseFiltersReturn {
         }
       }
 
-      // Helicopters only filter
+      // Helicopters only filter (true = choppers only, false = airplanes only)
       if (filters.helicopters_only && !isHelicopter(ac)) {
+        return false;
+      }
+      if (!filters.helicopters_only && isHelicopter(ac)) {
         return false;
       }
 

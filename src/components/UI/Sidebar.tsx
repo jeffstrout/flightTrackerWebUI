@@ -79,7 +79,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                   : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
               }`}
             >
-              Helicopters
+              Choppers
             </button>
             
             <button
@@ -90,7 +90,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                   : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
               }`}
             >
-              All Aircraft
+              Airplanes
             </button>
           </div>
 
@@ -99,7 +99,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-2">
               <div className="flex items-center space-x-1">
                 <div className="w-3 h-3 bg-green-500 rounded-full" />
-                <span className="text-gray-600 dark:text-gray-400">Helicopters</span>
+                <span className="text-gray-600 dark:text-gray-400">Choppers</span>
               </div>
               <div className="font-semibold text-gray-900 dark:text-gray-100">
                 {stats.helicopters}
