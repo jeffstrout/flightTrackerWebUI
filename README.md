@@ -10,12 +10,12 @@ A responsive web interface for visualizing real-time flight data collected by th
 ## ✨ Features
 
 🗺️ **Interactive Map** - OpenStreetMap-based flight visualization with custom aircraft markers  
-🔄 **Real-time Updates** - Auto-refreshing flight data with configurable intervals (5s-5m)  
+🔄 **Real-time Updates** - Auto-refreshing flight data every 3 seconds  
 📱 **Responsive Design** - Seamless experience on desktop, tablet, and mobile devices  
 🚁 **Helicopter-First** - Default view shows helicopters with easy toggle for all aircraft  
 🔍 **Flight Search** - Search and filter flights by callsign, registration, and more  
 📊 **Unified Statistics** - Total aircraft counts always visible regardless of active filter  
-⚙️ **Enhanced Settings** - Refresh intervals and version info accessible via gear icon  
+⚙️ **Enhanced Settings** - Version info and app settings accessible via gear icon  
 🌙 **Auto Dark Mode** - Follows system theme preferences  
 📍 **Fit All Button** - New map control to show all aircraft in region at once  
 

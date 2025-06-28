@@ -21,12 +21,15 @@ A responsive web interface for visualizing real-time flight data collected by th
 
 ### Technology Stack
 - **Framework**: Vite + React 18 (TypeScript)
-- **Mapping**: Leaflet.js with OpenStreetMap tiles
+- **Mapping**: Leaflet.js with OpenStreetMap tiles (via react-leaflet)
 - **Styling**: Tailwind CSS for responsive design with auto dark mode
+- **Utilities**: clsx + tailwind-merge for conditional class management
 - **HTTP Client**: Axios for API communication
 - **State Management**: React Context + useReducer
 - **Icons**: Lucide React for consistent iconography
 - **Build Tool**: Vite for fast development and optimized builds
+- **Image Processing**: Sharp for build-time image optimization
+- **Testing**: Vitest for unit and integration tests
 - **Deployment**: AWS S3 + ECS Fargate with GitHub Actions CI/CD
 
 ### Key Design Decisions
@@ -39,7 +42,7 @@ A responsive web interface for visualizing real-time flight data collected by th
 #### Map Integration: Leaflet + OpenStreetMap
 - **Leaflet**: Lightweight, mobile-friendly, extensive plugin ecosystem
 - **OpenStreetMap**: Free, no API keys required, global coverage
-- **Custom Aircraft Icons**: SVG-based icons for different aircraft types
+- **Custom Aircraft Icons**: Inline SVG icons for helicopters and airplanes
 - **Real-time Updates**: Smooth aircraft position transitions
 
 #### Production Optimizations
@@ -67,8 +70,12 @@ A responsive web interface for visualizing real-time flight data collected by th
 The web UI connects to the existing Flight Tracker Collector service:
 
 #### Primary Endpoints
+- `GET /health` - Health check endpoint
 - `GET /api/v1/{region}/flights` - All flights for region (airborne aircraft only after filtering)
 - `GET /api/v1/{region}/choppers` - Helicopters only (airborne aircraft only after filtering)
+- `GET /api/v1/{region}/stats` - Statistics for a region
+- `GET /api/v1/{region}/flights/tabular` - Flights in CSV format for export
+- `GET /api/v1/{region}/choppers/tabular` - Helicopters in CSV format for export
 - `GET /api/v1/regions` - Available regions list
 - `GET /api/v1/status` - System health and collector status
 
@@ -106,12 +113,13 @@ interface Aircraft {
 #### Core Components
 ```
 src/
+├── App.tsx                        # Main application component with state management
+├── main.tsx                       # Application entry point
 ├── components/
 │   ├── Map/
-│   │   ├── FlightMap.tsx          # Main map container
-│   │   ├── AircraftMarker.tsx     # Individual aircraft markers
-│   │   ├── AircraftPopup.tsx      # Aircraft info popup
-│   │   └── MapControls.tsx        # Zoom, layers, etc.
+│   │   ├── FlightMap.tsx          # Main map container with aircraft tracking
+│   │   ├── AircraftMarker.tsx     # Individual aircraft markers with icons
+│   │   └── SafeMapContainer.tsx   # Error boundary wrapper for Leaflet map
 │   ├── UI/
 │   │   ├── Header.tsx             # App header with settings menu and version info
 │   │   ├── Sidebar.tsx            # Flight list with helicopter-first toggle and unified stats
@@ -119,19 +127,15 @@ src/
 │   │   └── FilterPanel.tsx        # Flight filtering controls
 │   └── Aircraft/
 │       ├── AircraftList.tsx       # Table/list view of flights
-│       ├── AircraftCard.tsx       # Individual aircraft details
-│       └── AircraftIcons.tsx      # Custom aircraft SVG icons
+│       └── AircraftCard.tsx       # Individual aircraft details
 ├── hooks/
-│   ├── useFlightData.tsx          # Flight data fetching with 3-second auto-refresh
-│   ├── useFilters.tsx             # Filter state management with ground aircraft exclusion
-│   └── useMap.tsx                 # Map state and interactions
+│   ├── useFlightData.ts           # Flight data fetching with 3-second auto-refresh
+│   ├── useFilters.ts              # Filter state management with ground aircraft exclusion
+│   ├── usePWA.ts                  # Progressive Web App functionality
+│   └── useVersion.ts              # Application version and build info
 ├── services/
 │   ├── api.ts                     # Production API client for collector service
 │   └── types.ts                   # TypeScript type definitions
-├── utils/
-│   ├── aircraft.ts                # Aircraft data utilities
-│   ├── geo.ts                     # Geographic calculations
-│   └── formatting.ts             # Data formatting helpers
 └── styles/
     └── globals.css                # Global styles with dark mode support
 ```
@@ -140,9 +144,9 @@ src/
 
 #### Map Features
 - **Real-time Aircraft Tracking**: Live position updates with smooth transitions (airborne only)
-- **Custom Aircraft Icons**: Different icons for commercial, military, helicopters
-- **Flight Paths**: Optional trail showing aircraft movement history
-- **Clustering**: Aircraft clustering at high zoom levels for performance
+- **Custom Aircraft Icons**: SVG-based icons for helicopters (X-shaped rotors) and airplanes (traditional shape)
+- **Icon Rotation**: Aircraft icons rotate based on heading/track direction
+- **Visual Feedback**: Selected aircraft highlighted with border, older aircraft fade
 - **Layer Controls**: Toggle between map styles, weather overlays
 - **Fit All Aircraft**: New map control button to automatically fit all visible aircraft in view
 
@@ -201,10 +205,10 @@ VITE_MAP_CENTER_LAT=32.3513            # Default map center (Tyler, TX)
 VITE_MAP_CENTER_LON=-95.3011
 VITE_MAP_TILE_SERVER=https://tile.openstreetmap.org/{z}/{x}/{y}.png
 
-# Feature Flags
-VITE_ENABLE_FLIGHT_TRAILS=true         # Show aircraft movement trails
-VITE_ENABLE_CLUSTERING=true            # Cluster aircraft at high zoom
-VITE_ENABLE_DARK_MODE=true             # Auto dark mode toggle
+# Feature Flags (defined but not implemented)
+VITE_ENABLE_FLIGHT_TRAILS=true         # Aircraft trails (not implemented)
+VITE_ENABLE_CLUSTERING=true            # Aircraft clustering (not implemented)
+VITE_ENABLE_DARK_MODE=true             # Auto dark mode toggle (implemented)
 ```
 
 ### Development Workflow
@@ -225,6 +229,9 @@ npm run lint
 
 # Run tests
 npm run test
+
+# Run tests with UI (requires @vitest/ui installation)
+npm run test:ui
 ```
 
 #### Production Build

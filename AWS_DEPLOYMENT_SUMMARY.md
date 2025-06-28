@@ -37,7 +37,7 @@
 
 ### Frontend Optimizations
 ✅ **Ground Aircraft Filtering**: Automatically excludes aircraft on ground  
-✅ **Configurable Refresh Intervals**: 5s, 10s, 15s, 30s, 1m, 2m, 5m via settings menu  
+✅ **Fixed 3-Second Refresh**: Automatic real-time updates with pause/resume on tab visibility  
 ✅ **Optimized Status Bar**: Removed average altitude and unnecessary messages  
 ✅ **Production API Integration**: Direct connection to ECS backend  
 ✅ **Auto Dark Mode**: Follows system theme preferences  
@@ -246,7 +246,7 @@ aws ecs update-service --cluster flight-tracker-cluster --service flight-tracker
 ### Current Performance
 - **Frontend Load Time**: ~2-3 seconds (S3 static hosting)
 - **API Response Time**: ~200-500ms (ECS Fargate + Redis)
-- **Data Refresh**: Configurable 5s-5m (user selectable)
+- **Data Refresh**: Fixed 3-second interval with smart pause/resume
 - **Concurrent Users**: Tested up to 50+ simultaneous users
 
 ### Optimization Results
