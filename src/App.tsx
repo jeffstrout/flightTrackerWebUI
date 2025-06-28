@@ -116,6 +116,7 @@ function App() {
             center={uiState.mapCenter}
             zoom={uiState.mapZoom}
             regionData={regionData}
+            filters={filters}
             onAircraftSelect={handleAircraftSelect}
             onMapStateChange={handleMapStateChange as any}
           />

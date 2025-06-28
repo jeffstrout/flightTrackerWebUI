@@ -5,7 +5,7 @@ import * as L from 'leaflet';
 import { Plus, Minus, Home, Maximize2 } from 'lucide-react';
 import SafeMapContainer from './SafeMapContainer';
 import AircraftMarker from './AircraftMarker';
-import type { Aircraft, Region } from '../../services/types';
+import type { Aircraft, Region, FlightFilters } from '../../services/types';
 
 interface FlightMapProps {
   aircraft: Aircraft[];
@@ -13,6 +13,7 @@ interface FlightMapProps {
   center: LatLngTuple;
   zoom: number;
   regionData?: Region | null;
+  filters?: FlightFilters;
   onAircraftSelect: (hex?: string) => void;
   onMapStateChange: (center: LatLngTuple, zoom: number) => void;
 }
@@ -156,6 +157,7 @@ const FlightMap: React.FC<FlightMapProps> = ({
   center,
   zoom,
   regionData,
+  filters,
   onAircraftSelect,
   onMapStateChange,
 }) => {
@@ -394,7 +396,7 @@ const FlightMap: React.FC<FlightMapProps> = ({
         <div className="flex items-center space-x-2 text-sm">
           <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
           <span className="text-gray-700 dark:text-gray-300 font-medium">
-            {aircraft.length} aircraft
+            {aircraft.length} {filters?.helicopters_only ? 'Choppers' : 'Airplanes'}
           </span>
         </div>
       </div>

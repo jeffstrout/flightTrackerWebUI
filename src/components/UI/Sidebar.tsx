@@ -31,9 +31,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 }) => {
 
   // Calculate statistics from total aircraft (unfiltered)
+  const helicopterCount = totalAircraft.filter(ac => ac.icao_aircraft_class?.startsWith('H')).length;
   const stats = {
     total: totalAircraft.length,
-    helicopters: totalAircraft.filter(ac => ac.icao_aircraft_class?.startsWith('H')).length,
+    helicopters: helicopterCount,
+    airplanes: totalAircraft.length - helicopterCount,
     military: totalAircraft.filter(ac => ac.hex.toUpperCase().startsWith('AE')).length,
     onGround: totalAircraft.filter(ac => ac.on_ground).length,
   };
@@ -109,10 +111,10 @@ const Sidebar: React.FC<SidebarProps> = ({
             <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-2">
               <div className="flex items-center space-x-1">
                 <Plane size={14} className="text-blue-500" />
-                <span className="text-gray-600 dark:text-gray-400">Total</span>
+                <span className="text-gray-600 dark:text-gray-400">Airplanes</span>
               </div>
               <div className="font-semibold text-gray-900 dark:text-gray-100">
-                {stats.total}
+                {stats.airplanes}
               </div>
             </div>
           </div>

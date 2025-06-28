@@ -41,10 +41,12 @@ const StatusBar: React.FC<StatusBarProps> = ({
   };
 
   // Calculate statistics from total aircraft (unfiltered)
+  const helicopterCount = totalAircraft.filter(ac => ac.icao_aircraft_class?.startsWith('H')).length;
   const stats = {
     visible: aircraft.length,
     total: totalAircraft.length,
-    helicopters: totalAircraft.filter(ac => ac.icao_aircraft_class?.startsWith('H')).length,
+    helicopters: helicopterCount,
+    airplanes: totalAircraft.length - helicopterCount,
     onGround: 0, // Always 0 since ground aircraft are filtered out
     avgAltitude: aircraft.length > 0 
       ? Math.round(aircraft.reduce((sum, ac) => sum + (ac.alt_baro || 0), 0) / aircraft.length)
@@ -108,13 +110,13 @@ const StatusBar: React.FC<StatusBarProps> = ({
             <span className="text-gray-600 dark:text-gray-400">choppers</span>
           </div>
 
-          {/* Total */}
+          {/* Airplanes */}
           <div className="flex items-center space-x-1">
             <Plane className="text-blue-500" size={16} />
             <span className="text-gray-700 dark:text-gray-300 font-medium">
-              {stats.total}
+              {stats.airplanes}
             </span>
-            <span className="text-gray-600 dark:text-gray-400">total</span>
+            <span className="text-gray-600 dark:text-gray-400">airplanes</span>
           </div>
 
           {/* On ground */}
