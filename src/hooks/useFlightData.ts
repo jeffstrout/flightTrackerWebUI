@@ -149,7 +149,7 @@ export function useFlightData(
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [autoRefresh, refreshInterval]);
+  }, [autoRefresh, refreshInterval, fetchFlightData]);
 
   // Handle online/offline status
   useEffect(() => {

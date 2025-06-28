@@ -1,7 +1,7 @@
 # Flight Tracker Web UI - Project Overview
 
 ## Purpose
-A responsive web interface for visualizing real-time flight data collected by the Flight Tracker Collector service. Provides an interactive map-based dashboard with advanced filtering, search, and configurable auto-refresh capabilities. Optimized for production use with ground aircraft filtering and clean UI design. Now branded as "Chopper Tracker" with helicopters as the default view.
+A responsive web interface for visualizing real-time flight data collected by the Flight Tracker Collector service. Provides an interactive map-based dashboard with advanced filtering, search, and fixed 3-second auto-refresh. Optimized for production use with ground aircraft filtering and clean UI design. Now branded as "Chopper Tracker" with helicopters as the default view.
 
 ## 🚀 Current Production Status
 - **Live URL**: http://flight-tracker-web-ui-1750266711.s3-website-us-east-1.amazonaws.com
@@ -13,10 +13,10 @@ A responsive web interface for visualizing real-time flight data collected by th
 
 ### Core Components
 1. **Interactive Map**: OpenStreetMap-based flight visualization with custom aircraft markers
-2. **Real-time Data**: Consumes Flight Tracker Collector API endpoints with configurable refresh intervals
+2. **Real-time Data**: Consumes Flight Tracker Collector API endpoints with 3-second auto-refresh
 3. **Responsive UI**: Mobile-first design working seamlessly on desktop, tablet, and mobile devices
 4. **Smart Flight Filtering**: Advanced filtering with automatic ground aircraft exclusion
-5. **Settings Menu**: User-configurable refresh intervals accessible via gear icon
+5. **Settings Menu**: Version info and app settings accessible via gear icon
 6. **Optimized Status Bar**: Clean display showing only relevant flight statistics
 
 ### Technology Stack
@@ -44,7 +44,7 @@ A responsive web interface for visualizing real-time flight data collected by th
 
 #### Production Optimizations
 - **Ground Aircraft Filtering**: Automatically excludes aircraft on ground from all displays
-- **Configurable Refresh**: User-selectable intervals from 5 seconds to 5 minutes
+- **Fixed 3-Second Refresh**: Automatic real-time updates every 3 seconds
 - **Clean Status Bar**: Removed average altitude and unnecessary message displays
 - **Auto Dark Mode**: Follows system theme preferences automatically
 - **Performance Tuned**: Optimized for hundreds of concurrent aircraft
@@ -113,7 +113,7 @@ src/
 │   │   ├── AircraftPopup.tsx      # Aircraft info popup
 │   │   └── MapControls.tsx        # Zoom, layers, etc.
 │   ├── UI/
-│   │   ├── Header.tsx             # App header with settings menu, version info, and refresh controls
+│   │   ├── Header.tsx             # App header with settings menu and version info
 │   │   ├── Sidebar.tsx            # Flight list with helicopter-first toggle and unified stats
 │   │   ├── StatusBar.tsx          # Optimized connection status and flight stats
 │   │   └── FilterPanel.tsx        # Flight filtering controls
@@ -122,7 +122,7 @@ src/
 │       ├── AircraftCard.tsx       # Individual aircraft details
 │       └── AircraftIcons.tsx      # Custom aircraft SVG icons
 ├── hooks/
-│   ├── useFlightData.tsx          # Flight data fetching with configurable refresh
+│   ├── useFlightData.tsx          # Flight data fetching with 3-second auto-refresh
 │   ├── useFilters.tsx             # Filter state management with ground aircraft exclusion
 │   └── useMap.tsx                 # Map state and interactions
 ├── services/
@@ -152,8 +152,8 @@ src/
 - **Helicopter-First Design**: Helicopters are now the default view with prominent toggle
 - **Search**: Find specific flights by callsign or registration
 - **Aircraft Details**: Popup with comprehensive aircraft information
-- **Configurable Auto-refresh**: User-selectable refresh intervals (5s, 10s, 15s, 30s, 1m, 2m, 5m)
-- **Settings Menu**: Gear icon providing access to refresh interval configuration and version info
+- **Fixed Auto-refresh**: Automatic 3-second refresh interval for real-time updates
+- **Settings Menu**: Gear icon providing access to version info and app settings
 - **Connection Status**: Shows online/offline status to collector API
 - **Auto Dark Mode**: Automatically follows system theme preferences
 - **Unified Statistics**: Aircraft counts always show total region data regardless of active filter
@@ -172,7 +172,7 @@ src/
 - **Virtual Scrolling**: Handle thousands of flights in list view
 - **Debounced Filtering**: Smooth filter interactions without lag
 - **Memoized Components**: Prevent unnecessary re-renders
-- **Configurable Refresh**: Reduces API load with user-controlled intervals
+- **3-Second Auto-Refresh**: Consistent data updates with visibility and online/offline pause
 
 #### Map Performance
 - **Marker Recycling**: Reuse Leaflet markers for better performance
@@ -193,7 +193,7 @@ src/
 # API Configuration
 VITE_API_BASE_URL=http://flight-tracker-alb-790028972.us-east-1.elb.amazonaws.com
 VITE_DEFAULT_REGION=etex                 # Default region on load
-VITE_REFRESH_INTERVAL=15000             # Default refresh interval (ms)
+VITE_REFRESH_INTERVAL=15000             # Environment default (currently overridden to 3000ms)
 
 # Map Configuration  
 VITE_MAP_DEFAULT_ZOOM=8                 # Initial map zoom level
@@ -273,17 +273,17 @@ aws s3 sync dist/ s3://flight-tracker-web-ui-1750266711 --delete
 - Component rendering and behavior with ground aircraft filtering
 - Utility functions (geo calculations, formatting)
 - API client functionality with production endpoints
-- Custom hooks including refresh interval management
+- Custom hooks with fixed 3-second refresh interval
 
 #### Integration Tests
 - Map interactions and aircraft rendering (airborne only)
 - Filter functionality end-to-end including ground aircraft exclusion
 - API integration with production backend
-- Settings menu and refresh interval configuration
+- Settings menu with version info display
 - Responsive design across breakpoints
 
 #### E2E Tests
-- Full user workflows (select region, filter flights, view details, configure refresh)
+- Full user workflows (select region, filter flights, view details)
 - Cross-browser compatibility
 - Mobile device testing
 - Performance testing with large datasets
@@ -304,7 +304,7 @@ aws s3 sync dist/ s3://flight-tracker-web-ui-1750266711 --delete
 
 ### Production Features Implemented
 ✅ **Ground Aircraft Filtering**: Automatic exclusion from all displays  
-✅ **Configurable Refresh Intervals**: 5s-5m user-selectable via settings menu  
+✅ **Fixed 3-Second Refresh**: Automatic real-time updates with pause/resume on tab visibility  
 ✅ **Optimized Status Bar**: Clean display without average altitude or system messages  
 ✅ **Production API Integration**: Direct connection to ECS Fargate backend  
 ✅ **Auto Dark Mode**: System preference detection and following  
@@ -326,6 +326,7 @@ aws s3 sync dist/ s3://flight-tracker-web-ui-1750266711 --delete
   - Budget monitoring and alerts
 
 ### Future Enhancements
+- **Configurable Refresh Intervals**: User-selectable refresh rates (5s, 10s, 15s, 30s, 1m, 2m, 5m)
 - **WebSocket Connection**: Real-time updates without polling
 - **Historical Data**: Time-based flight replay functionality  
 - **Flight Alerts**: Notifications for specific aircraft or events
