@@ -6,7 +6,12 @@ class FlightTrackerAPI {
   private baseURL: string;
 
   constructor() {
-    this.baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+    // HARDCODE THE URL TO BYPASS ALL ENVIRONMENT/CACHE ISSUES
+    this.baseURL = 'http://flight-tracker-alb-790028972.us-east-1.elb.amazonaws.com';
+    
+    // FORCE LOGGING TO DEBUG CACHE ISSUES
+    console.error('🚨 HARDCODED API BASE URL:', this.baseURL);
+    console.error('🚨 ENV VARIABLE (IGNORED):', import.meta.env.VITE_API_BASE_URL);
     
     this.client = axios.create({
       baseURL: this.baseURL,
