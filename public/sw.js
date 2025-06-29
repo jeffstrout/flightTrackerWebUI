@@ -1,7 +1,7 @@
 // Minimal Service Worker for PWA functionality
 // This service worker doesn't cache anything - it just enables the PWA install prompt
 
-const CACHE_NAME = 'flight-tracker-v2-api-fix';
+const CACHE_NAME = 'flight-tracker-v3-force-refresh';
 
 // Install event - required for PWA
 self.addEventListener('install', (event) => {

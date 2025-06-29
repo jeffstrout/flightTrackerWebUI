@@ -1,8 +1,8 @@
 // Flight Tracker Web UI Configuration
 window.FLIGHT_TRACKER_CONFIG = {
   VERSION: {
-    "version": "1.0.8",
-    "commit": "07b214e",
+    "version": "1.0.9",
+    "commit": "2aa6967",
     "branch": "main",
     "clean": false,
     "buildTime": new Date().toISOString(),
