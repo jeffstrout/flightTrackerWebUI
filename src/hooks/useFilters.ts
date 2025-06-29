@@ -36,16 +36,7 @@ export function useFilters(aircraft: Aircraft[]): UseFiltersReturn {
   const isHelicopter = useCallback((ac: Aircraft): boolean => {
     const isHeli = ac.icao_aircraft_class?.startsWith('H') || false;
     
-    // Debug logging for helicopter detection
-    if (isHeli) {
-      console.log('🚁 Helicopter detected:', {
-        hex: ac.hex,
-        flight: ac.flight,
-        icao_class: ac.icao_aircraft_class,
-        model: ac.model,
-        aircraft_type: ac.aircraft_type
-      });
-    }
+    // Helicopter detection based on ICAO class
     
     return isHeli;
   }, []);
@@ -185,12 +176,8 @@ export function useFilters(aircraft: Aircraft[]): UseFiltersReturn {
     const militaryCount = aircraft.filter(isMilitary).length;
     const commercialCount = aircraft.filter(isCommercial).length;
 
-    // Debug: log unique ICAO aircraft classes
+    // Count unique ICAO aircraft classes for statistics
     const icaoClasses = new Set(aircraft.map(ac => ac.icao_aircraft_class).filter(Boolean));
-    if (icaoClasses.size > 0) {
-      console.log('📊 All ICAO aircraft classes in dataset:', Array.from(icaoClasses).sort());
-      console.log('🚁 Helicopter count:', helicopterCount);
-    }
 
     return {
       total: aircraft.length,

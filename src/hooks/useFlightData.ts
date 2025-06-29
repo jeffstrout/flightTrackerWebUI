@@ -34,7 +34,7 @@ export function useFlightData(
   // Fetch flight data and region info
   const fetchFlightData = useCallback(async (signal?: AbortSignal) => {
     const fetchStartTime = Date.now();
-    console.info(`📡 Fetching flight data at ${new Date().toISOString()}`);
+    // Fetching flight data
     
     try {
       setError(null);
@@ -63,7 +63,7 @@ export function useFlightData(
       setLastUpdate(new Date());
 
       const fetchTime = Date.now() - fetchStartTime;
-      console.info(`✈️ Loaded ${flightData.length} aircraft for region: ${region} in ${fetchTime}ms`, currentRegionData);
+      // Successfully loaded flight data
     } catch (err) {
       // Don't set error if request was aborted
       if (signal?.aborted) return;
@@ -72,7 +72,7 @@ export function useFlightData(
       setError(apiError);
       setLoading(false);
       
-      console.error('Failed to fetch flight data:', apiError);
+      // Error is already set in state, no need to log
     }
   }, [region]);
 
@@ -93,7 +93,7 @@ export function useFlightData(
 
   // Set up auto-refresh interval
   useEffect(() => {
-    console.info(`🔄 Setting up refresh: interval=${refreshInterval}ms, auto-refresh=${autoRefresh}`);
+    // Setting up refresh interval
     
     // Clear any existing interval
     if (intervalRef.current) {
@@ -105,9 +105,8 @@ export function useFlightData(
 
     // Set up auto-refresh if enabled
     if (autoRefresh && refreshInterval > 0) {
-      console.info(`⏱️ Starting refresh interval: ${refreshInterval}ms`);
+      // Starting refresh interval
       intervalRef.current = setInterval(() => {
-        console.info(`🔄 Interval tick at ${new Date().toISOString()}`);
         fetchFlightData();
       }, refreshInterval);
     }
@@ -135,13 +134,13 @@ export function useFlightData(
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.hidden) {
-        console.info('🌙 Tab hidden - pausing auto-refresh');
+        // Tab hidden - pausing auto-refresh
         // Tab is hidden, pause auto-refresh
         if (intervalRef.current) {
           clearInterval(intervalRef.current);
         }
       } else {
-        console.info('☀️ Tab visible - resuming auto-refresh');
+        // Tab visible - resuming auto-refresh
         // Tab is visible, resume auto-refresh
         if (autoRefresh && refreshInterval > 0) {
           // Immediate fetch when tab becomes visible
@@ -164,14 +163,14 @@ export function useFlightData(
   // Handle online/offline status
   useEffect(() => {
     const handleOnline = () => {
-      console.info('🌐 Connection restored, resuming flight data updates');
+      // Connection restored, resuming flight data updates
       if (autoRefresh) {
         refetch();
       }
     };
 
     const handleOffline = () => {
-      console.warn('📴 Connection lost, pausing flight data updates');
+      // Connection lost, pausing flight data updates
       setError({
         message: 'Connection lost. Flight data updates paused.',
         timestamp: new Date().toISOString(),

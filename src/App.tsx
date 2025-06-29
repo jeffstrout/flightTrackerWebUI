@@ -7,6 +7,9 @@ import StatusBar from './components/UI/StatusBar';
 import { useFlightData } from './hooks/useFlightData';
 import { useFilters } from './hooks/useFilters';
 import type { UIState } from './services/types';
+import ErrorBoundary from './components/ErrorBoundary';
+import APIErrorBoundary from './components/APIErrorBoundary';
+import MapErrorBoundary from './components/Map/MapErrorBoundary';
 
 function App() {
   // Check if mobile on initial load
@@ -85,7 +88,9 @@ function App() {
   );
 
   return (
-    <div className="h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
+    <ErrorBoundary>
+      <APIErrorBoundary onConnectionRestored={() => window.location.reload()}>
+        <div className="h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
       {/* Header */}
       <Header
         region={region}
@@ -110,16 +115,18 @@ function App() {
 
         {/* Map container */}
         <div className="flex-1 relative">
-          <FlightMap
-            aircraft={filteredAircraft}
-            selectedAircraft={selectedAircraftData}
-            center={uiState.mapCenter}
-            zoom={uiState.mapZoom}
-            regionData={regionData}
-            filters={filters}
-            onAircraftSelect={handleAircraftSelect}
-            onMapStateChange={handleMapStateChange as any}
-          />
+          <MapErrorBoundary>
+            <FlightMap
+              aircraft={filteredAircraft}
+              selectedAircraft={selectedAircraftData}
+              center={uiState.mapCenter}
+              zoom={uiState.mapZoom}
+              regionData={regionData}
+              filters={filters}
+              onAircraftSelect={handleAircraftSelect}
+              onMapStateChange={handleMapStateChange as any}
+            />
+          </MapErrorBoundary>
 
           {/* Mobile sidebar toggle */}
           {!uiState.sidebarOpen && (
@@ -175,7 +182,9 @@ function App() {
         systemStatus={systemStatus}
       />
 
-    </div>
+        </div>
+      </APIErrorBoundary>
+    </ErrorBoundary>
   );
 }
 

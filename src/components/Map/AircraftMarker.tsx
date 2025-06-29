@@ -85,30 +85,13 @@ const AircraftMarker: React.FC<AircraftMarkerProps> = ({
 
   // Don't render marker if coordinates are invalid
   if (!hasValidCoordinates) {
-    console.warn('🗺️ Skipping aircraft with invalid coordinates:', {
-      hex: aircraft.hex,
-      flight: aircraft.flight,
-      lat: aircraft.lat,
-      lon: aircraft.lon
-    });
     return null;
   }
 
   const position: LatLngExpression = [aircraft.lat, aircraft.lon];
   
-  // Debug logging for helicopters
+  // Check if this is a helicopter
   const isHelicopter = aircraft.icao_aircraft_class?.startsWith('H');
-  if (isHelicopter) {
-    console.log('🚁 Rendering helicopter marker:', {
-      hex: aircraft.hex,
-      flight: aircraft.flight,
-      position: [aircraft.lat, aircraft.lon],
-      icao_class: aircraft.icao_aircraft_class,
-      valid_coords: !isNaN(aircraft.lat) && !isNaN(aircraft.lon),
-      lat: aircraft.lat,
-      lon: aircraft.lon
-    });
-  }
   
   // Memoize the icon to prevent unnecessary re-renders
   const icon = useMemo(() => 

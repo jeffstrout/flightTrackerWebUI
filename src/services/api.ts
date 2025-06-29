@@ -6,12 +6,8 @@ class FlightTrackerAPI {
   private baseURL: string;
 
   constructor() {
-    // HARDCODE THE URL TO BYPASS ALL ENVIRONMENT/CACHE ISSUES - USE HTTPS
-    this.baseURL = 'https://flight-tracker-alb-790028972.us-east-1.elb.amazonaws.com';
-    
-    // FORCE LOGGING TO DEBUG CACHE ISSUES
-    console.error('🚨 HARDCODED API BASE URL:', this.baseURL);
-    console.error('🚨 ENV VARIABLE (IGNORED):', import.meta.env.VITE_API_BASE_URL);
+    // Use environment variable with fallback for development
+    this.baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
     
     this.client = axios.create({
       baseURL: this.baseURL,
@@ -24,7 +20,7 @@ class FlightTrackerAPI {
       },
     });
 
-    // Add request interceptors for logging
+    // Add request interceptors for cache busting
     this.client.interceptors.request.use(
       (config) => {
         // Add timestamp to prevent caching
@@ -32,11 +28,9 @@ class FlightTrackerAPI {
           ...config.params,
           _t: Date.now()
         };
-        console.debug(`API Request: ${config.method?.toUpperCase()} ${config.url}?_t=${config.params._t}`);
         return config;
       },
       (error) => {
-        console.error('API Request Error:', error);
         return Promise.reject(error);
       }
     );
@@ -44,7 +38,6 @@ class FlightTrackerAPI {
     // Add response interceptors for error handling
     this.client.interceptors.response.use(
       (response) => {
-        console.debug(`API Response: ${response.status} ${response.config.url}`);
         return response;
       },
       (error: AxiosError) => {
@@ -55,7 +48,10 @@ class FlightTrackerAPI {
           endpoint: error.config?.url,
         };
 
-        console.error('API Response Error:', apiError);
+        // Only log errors in development
+        if (import.meta.env.DEV) {
+          console.error('API Response Error:', apiError);
+        }
         return Promise.reject(apiError);
       }
     );
@@ -139,7 +135,6 @@ class FlightTrackerAPI {
       await this.getHealth();
       return true;
     } catch (error) {
-      console.warn('API connection check failed:', error);
       return false;
     }
   }
