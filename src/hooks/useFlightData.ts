@@ -30,7 +30,6 @@ export function useFlightData(
   
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
-  const isVisibleRef = useRef<boolean>(!document.hidden);
 
   // Fetch flight data and region info
   const fetchFlightData = useCallback(async (signal?: AbortSignal) => {
@@ -92,62 +91,37 @@ export function useFlightData(
     await fetchFlightData(controller.signal);
   }, [fetchFlightData]);
 
-  // Function to start/restart the interval
-  const startInterval = useCallback(() => {
-    // Clear any existing interval
-    if (intervalRef.current) {
-      console.info('🔧 Clearing existing interval');
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-
-    // Only start if auto-refresh is enabled, interval is valid, and tab is visible
-    if (autoRefresh && refreshInterval > 0 && isVisibleRef.current) {
-      console.info(`⏱️ Starting new refresh interval: ${refreshInterval}ms at ${new Date().toISOString()}`);
-      
-      // Log the actual interval value being used
-      console.info(`⏱️ setInterval called with: ${refreshInterval}ms`);
-      
-      intervalRef.current = setInterval(() => {
-        const now = new Date().toISOString();
-        console.info(`🔄 Interval tick at ${now} (interval: ${refreshInterval}ms)`);
-        fetchFlightData();
-      }, refreshInterval);
-      
-      // Log the interval ID to track it
-      console.info(`⏱️ Interval ID created: ${intervalRef.current}`);
-    } else {
-      console.warn(`⚠️ Interval NOT started: autoRefresh=${autoRefresh}, refreshInterval=${refreshInterval}, isVisible=${isVisibleRef.current}`);
-    }
-  }, [autoRefresh, refreshInterval, fetchFlightData]);
-
-  // Function to stop the interval
-  const stopInterval = useCallback(() => {
-    if (intervalRef.current) {
-      console.info('🛑 Stopping refresh interval');
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-  }, []);
-
   // Set up auto-refresh interval
   useEffect(() => {
     console.info(`🔄 Setting up refresh: interval=${refreshInterval}ms, auto-refresh=${autoRefresh}`);
     
+    // Clear any existing interval
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+
     // Initial fetch
     refetch();
 
-    // Start the interval
-    startInterval();
+    // Set up auto-refresh if enabled
+    if (autoRefresh && refreshInterval > 0) {
+      console.info(`⏱️ Starting refresh interval: ${refreshInterval}ms`);
+      intervalRef.current = setInterval(() => {
+        console.info(`🔄 Interval tick at ${new Date().toISOString()}`);
+        fetchFlightData();
+      }, refreshInterval);
+    }
 
     // Cleanup function
     return () => {
-      stopInterval();
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
       }
     };
-  }, [autoRefresh, refreshInterval, refetch, startInterval, stopInterval]);
+  }, [autoRefresh, refreshInterval, region]); // Only re-run when these change
 
   // Handle region changes
   const handleRegionChange = useCallback((newRegion: string) => {
@@ -160,17 +134,23 @@ export function useFlightData(
   // Handle visibility change (pause/resume when tab is hidden/visible)
   useEffect(() => {
     const handleVisibilityChange = () => {
-      isVisibleRef.current = !document.hidden;
-      
       if (document.hidden) {
         console.info('🌙 Tab hidden - pausing auto-refresh');
-        stopInterval();
+        // Tab is hidden, pause auto-refresh
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current);
+        }
       } else {
         console.info('☀️ Tab visible - resuming auto-refresh');
-        // Immediate fetch when tab becomes visible
-        fetchFlightData();
-        // Restart the interval
-        startInterval();
+        // Tab is visible, resume auto-refresh
+        if (autoRefresh && refreshInterval > 0) {
+          // Immediate fetch when tab becomes visible
+          fetchFlightData();
+          
+          intervalRef.current = setInterval(() => {
+            fetchFlightData();
+          }, refreshInterval);
+        }
       }
     };
 
@@ -179,7 +159,7 @@ export function useFlightData(
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [fetchFlightData, startInterval, stopInterval]);
+  }, [autoRefresh, refreshInterval, fetchFlightData]);
 
   // Handle online/offline status
   useEffect(() => {
