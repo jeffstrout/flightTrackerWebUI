@@ -1,8 +1,8 @@
 // Flight Tracker Web UI Configuration
 window.FLIGHT_TRACKER_CONFIG = {
   VERSION: {
-    "version": "1.0.7",
-    "commit": "797c5b3",
+    "version": "1.0.8",
+    "commit": "07b214e",
     "branch": "main",
     "clean": false,
     "buildTime": new Date().toISOString(),
@@ -16,7 +16,8 @@ window.FLIGHT_TRACKER_CONFIG = {
     "author": "Flight Tracker Team"
   },
   
-  // Cache busting timestamp  
+  // Force cache busting - updated API URL
   CACHE_BUST: Date.now(),
-  DEPLOY_TIME: new Date().toISOString()
+  DEPLOY_TIME: new Date().toISOString(),
+  API_URL_FIXED: true
 };
