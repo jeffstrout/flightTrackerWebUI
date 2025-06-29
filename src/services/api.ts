@@ -6,8 +6,8 @@ class FlightTrackerAPI {
   private baseURL: string;
 
   constructor() {
-    // HARDCODE THE URL TO BYPASS ALL ENVIRONMENT/CACHE ISSUES
-    this.baseURL = 'http://flight-tracker-alb-790028972.us-east-1.elb.amazonaws.com';
+    // HARDCODE THE URL TO BYPASS ALL ENVIRONMENT/CACHE ISSUES - USE HTTPS
+    this.baseURL = 'https://flight-tracker-alb-790028972.us-east-1.elb.amazonaws.com';
     
     // FORCE LOGGING TO DEBUG CACHE ISSUES
     console.error('🚨 HARDCODED API BASE URL:', this.baseURL);
