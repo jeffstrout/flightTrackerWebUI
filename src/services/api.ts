@@ -13,13 +13,21 @@ class FlightTrackerAPI {
       timeout: 10000,
       headers: {
         'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
       },
     });
 
     // Add request interceptors for logging
     this.client.interceptors.request.use(
       (config) => {
-        console.debug(`API Request: ${config.method?.toUpperCase()} ${config.url}`);
+        // Add timestamp to prevent caching
+        config.params = {
+          ...config.params,
+          _t: Date.now()
+        };
+        console.debug(`API Request: ${config.method?.toUpperCase()} ${config.url}?_t=${config.params._t}`);
         return config;
       },
       (error) => {

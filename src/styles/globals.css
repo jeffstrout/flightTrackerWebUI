@@ -17,6 +17,24 @@
   .leaflet-container {
     @apply h-full w-full;
     z-index: 1 !important;
+    /* Safari-specific fixes for rendering issues */
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+  
+  /* Safari-specific fix for map tiles */
+  .leaflet-tile-container {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+  
+  /* Safari rendering optimization */
+  .leaflet-marker-icon,
+  .leaflet-marker-shadow {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
   }
   
   /* Ensure sidebar always appears above Leaflet */

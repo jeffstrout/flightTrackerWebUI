@@ -103,11 +103,21 @@ export function useFlightData(
 
     // Only start if auto-refresh is enabled, interval is valid, and tab is visible
     if (autoRefresh && refreshInterval > 0 && isVisibleRef.current) {
-      console.info(`⏱️ Starting new refresh interval: ${refreshInterval}ms`);
+      console.info(`⏱️ Starting new refresh interval: ${refreshInterval}ms at ${new Date().toISOString()}`);
+      
+      // Log the actual interval value being used
+      console.info(`⏱️ setInterval called with: ${refreshInterval}ms`);
+      
       intervalRef.current = setInterval(() => {
-        console.info(`🔄 Interval tick at ${new Date().toISOString()}`);
+        const now = new Date().toISOString();
+        console.info(`🔄 Interval tick at ${now} (interval: ${refreshInterval}ms)`);
         fetchFlightData();
       }, refreshInterval);
+      
+      // Log the interval ID to track it
+      console.info(`⏱️ Interval ID created: ${intervalRef.current}`);
+    } else {
+      console.warn(`⚠️ Interval NOT started: autoRefresh=${autoRefresh}, refreshInterval=${refreshInterval}, isVisible=${isVisibleRef.current}`);
     }
   }, [autoRefresh, refreshInterval, fetchFlightData]);
 

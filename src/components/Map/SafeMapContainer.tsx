@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { MapContainer, TileLayer } from 'react-leaflet';
 import { LatLngTuple } from 'leaflet';
+import L from 'leaflet';
 
 interface SafeMapContainerProps {
   center: LatLngTuple;
@@ -26,6 +27,7 @@ const SafeMapContainer: React.FC<SafeMapContainerProps> = ({
   const [mapKey, setMapKey] = useState(0);
   const [isMapReady, setIsMapReady] = useState(false);
   const mapRef = useRef<L.Map | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Ultra-safe coordinate validation
   const getSafeCoordinates = (inputCenter: LatLngTuple, inputZoom: number) => {
@@ -83,12 +85,34 @@ const SafeMapContainer: React.FC<SafeMapContainerProps> = ({
 
   const handleMapCreated = (map: L.Map) => {
     mapRef.current = map;
-    setIsMapReady(true);
-    onMapReady?.(map);
+    
+    // Safari-specific fix: Force map invalidation after creation
+    setTimeout(() => {
+      if (map && typeof map.invalidateSize === 'function') {
+        console.info('🗺️ Invalidating map size for Safari');
+        map.invalidateSize();
+      }
+      setIsMapReady(true);
+      onMapReady?.(map);
+    }, 100);
   };
 
+  // Safari-specific: Handle window resize
+  useEffect(() => {
+    const handleResize = () => {
+      if (mapRef.current && typeof mapRef.current.invalidateSize === 'function') {
+        setTimeout(() => {
+          mapRef.current?.invalidateSize();
+        }, 100);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
-    <div style={style}>
+    <div ref={containerRef} style={style}>
       <MapContainer
         key={`safe-map-${mapKey}-${safeCenter[0]}-${safeCenter[1]}-${safeZoom}`}
         center={safeCenter}
@@ -100,6 +124,8 @@ const SafeMapContainer: React.FC<SafeMapContainerProps> = ({
         zoomSnap={0.1}
         maxBounds={[[-90, -180], [90, 180]]}
         maxBoundsViscosity={1.0}
+        preferCanvas={true}
+        renderer={L.canvas()}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

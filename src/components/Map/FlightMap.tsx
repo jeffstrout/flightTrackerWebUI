@@ -96,7 +96,8 @@ function MapEventHandler({
 function MapController({ 
   selectedAircraft, 
   center, 
-  zoom 
+  zoom,
+  forceInvalidate
 }: { 
   selectedAircraft?: Aircraft;
   center: LatLngTuple;
