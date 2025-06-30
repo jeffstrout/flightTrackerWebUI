@@ -30,6 +30,8 @@ export function useFlightData(
   
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const retryAttemptRef = useRef<number>(0);
+  const backoffTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Fetch flight data and region info
   const fetchFlightData = useCallback(async (signal?: AbortSignal) => {
@@ -64,15 +66,43 @@ export function useFlightData(
 
       const fetchTime = Date.now() - fetchStartTime;
       // Successfully loaded flight data
-    } catch (err) {
+      // Reset retry attempt on success
+      retryAttemptRef.current = 0;
+    } catch (err: any) {
       // Don't set error if request was aborted
       if (signal?.aborted) return;
 
       const apiError = err as APIError;
-      setError(apiError);
-      setLoading(false);
       
-      // Error is already set in state, no need to log
+      // Check if it's a rate limit error (429)
+      if (err.response?.status === 429 || err.status === 429) {
+        // Calculate exponential backoff: 2^attempt * 1000ms (1s, 2s, 4s, 8s, etc.)
+        const backoffTime = Math.min(Math.pow(2, retryAttemptRef.current) * 1000, 60000); // Max 60s
+        retryAttemptRef.current += 1;
+        
+        setError({
+          ...apiError,
+          message: `Rate limit exceeded. Retrying in ${backoffTime / 1000}s...`,
+          timestamp: new Date().toISOString(),
+        });
+        setLoading(false);
+        
+        // Clear any existing backoff timeout
+        if (backoffTimeoutRef.current) {
+          clearTimeout(backoffTimeoutRef.current);
+        }
+        
+        // Schedule retry with exponential backoff
+        backoffTimeoutRef.current = setTimeout(() => {
+          fetchFlightData(signal);
+        }, backoffTime);
+      } else {
+        // For other errors, set error normally
+        setError(apiError);
+        setLoading(false);
+        // Reset retry attempts for non-429 errors
+        retryAttemptRef.current = 0;
+      }
     }
   }, [region]);
 
@@ -118,6 +148,9 @@ export function useFlightData(
       }
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
+      }
+      if (backoffTimeoutRef.current) {
+        clearTimeout(backoffTimeoutRef.current);
       }
     };
   }, [autoRefresh, refreshInterval, region]); // Only re-run when these change
