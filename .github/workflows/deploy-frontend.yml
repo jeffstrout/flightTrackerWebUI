@@ -22,14 +22,11 @@ jobs:
         node-version: ${{ env.NODE_VERSION }}
         cache: 'npm'
 
-    - name: Install dependencies
+    - name: Install dependencies (production only)
       run: |
-        echo "📦 Installing dependencies..."
-        npm ci --verbose
-        echo "✅ Dependencies installed successfully"
-
-    - name: Run tests (optional for first deployment)
-      run: npm test -- --run --reporter=verbose || echo "Tests skipped for initial deployment"
+        echo "📦 Installing production dependencies only..."
+        npm ci --omit=dev
+        echo "✅ Production dependencies installed successfully"
 
     - name: Update version info
       run: |
@@ -71,7 +68,7 @@ jobs:
       env:
         VITE_API_BASE_URL: http://flight-tracker-alb-790028972.us-east-1.elb.amazonaws.com
         VITE_DEFAULT_REGION: etex
-        VITE_REFRESH_INTERVAL: 15000
+        VITE_REFRESH_INTERVAL: 3000
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
