@@ -32,7 +32,7 @@ function App() {
     mapZoom: parseInt(import.meta.env.VITE_MAP_DEFAULT_ZOOM || '8', 10) || 8,
     sidebarOpen: !isMobile, // Start closed on mobile, open on desktop
     autoRefresh: true,
-    refreshInterval: parseInt(import.meta.env.VITE_REFRESH_INTERVAL || '15000', 10),
+    refreshInterval: parseInt(import.meta.env.VITE_REFRESH_INTERVAL || '3000', 10),
   });
 
   // Flight data and filtering
