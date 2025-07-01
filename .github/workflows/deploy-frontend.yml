@@ -22,11 +22,11 @@ jobs:
         node-version: ${{ env.NODE_VERSION }}
         cache: 'npm'
 
-    - name: Install dependencies (production only)
+    - name: Install dependencies
       run: |
-        echo "📦 Installing production dependencies only..."
-        npm ci --omit=dev
-        echo "✅ Production dependencies installed successfully"
+        echo "📦 Installing dependencies..."
+        npm ci
+        echo "✅ Dependencies installed successfully"
 
     - name: Update version info
       run: |
