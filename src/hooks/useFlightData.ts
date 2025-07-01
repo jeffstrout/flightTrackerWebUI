@@ -16,7 +16,7 @@ interface UseFlightDataReturn {
 
 export function useFlightData(
   autoRefresh: boolean = true,
-  refreshInterval: number = 15000
+  refreshInterval: number = 3000
 ): UseFlightDataReturn {
   const [aircraft, setAircraft] = useState<Aircraft[]>([]);
   const [region, setRegion] = useState<string>(
