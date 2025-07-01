@@ -1,6 +1,6 @@
-import React, { useMemo } from 'react';
-import { Marker } from 'react-leaflet';
-import { DivIcon, LatLngExpression } from 'leaflet';
+import React, { useEffect, useRef } from 'react';
+import { useMap } from 'react-leaflet';
+import { DivIcon, LatLngExpression, Marker as LeafletMarker } from 'leaflet';
 import type { Aircraft } from '../../services/types';
 
 interface AircraftMarkerProps {
@@ -69,6 +69,10 @@ const AircraftMarker: React.FC<AircraftMarkerProps> = ({
   isSelected, 
   onClick 
 }) => {
+  const map = useMap();
+  const markerRef = useRef<LeafletMarker | null>(null);
+  const lastPositionRef = useRef<{lat: number, lon: number} | null>(null);
+  
   // Validate coordinates before creating position
   const hasValidCoordinates = (
     typeof aircraft.lat === 'number' && 
@@ -88,26 +92,45 @@ const AircraftMarker: React.FC<AircraftMarkerProps> = ({
     return null;
   }
 
-  const position: LatLngExpression = [aircraft.lat, aircraft.lon];
-  
-  // Check if this is a helicopter
-  const isHelicopter = aircraft.icao_aircraft_class?.startsWith('H');
-  
-  // Memoize the icon to prevent unnecessary re-renders
-  const icon = useMemo(() => 
-    createAircraftIcon(aircraft, isSelected), 
-    [aircraft, isSelected]
-  );
+  useEffect(() => {
+    // Create icon and position
+    const icon = createAircraftIcon(aircraft, isSelected);
+    const position: LatLngExpression = [aircraft.lat, aircraft.lon];
+    
+    // Check if position actually changed
+    const positionChanged = !lastPositionRef.current || 
+      lastPositionRef.current.lat !== aircraft.lat || 
+      lastPositionRef.current.lon !== aircraft.lon;
+    
+    if (positionChanged) {
+      console.log(`🛩️ POSITION CHANGED: ${aircraft.hex} moved from ${lastPositionRef.current?.lat},${lastPositionRef.current?.lon} to ${aircraft.lat},${aircraft.lon}`);
+      lastPositionRef.current = { lat: aircraft.lat, lon: aircraft.lon };
+    }
+    
+    if (!markerRef.current) {
+      // Create new marker
+      markerRef.current = new LeafletMarker(position, { icon });
+      markerRef.current.on('click', onClick);
+      markerRef.current.addTo(map);
+      console.log(`✈️ NEW MARKER: ${aircraft.hex} created at ${aircraft.lat},${aircraft.lon}`);
+    } else {
+      // Always update position and icon (even if position didn't change, icon might need updates for rotation/selection)
+      markerRef.current.setLatLng(position);
+      markerRef.current.setIcon(icon);
+    }
+  }, [aircraft.lat, aircraft.lon, aircraft.track, aircraft.seen, aircraft.hex, isSelected, map, onClick]);
 
-  return (
-    <Marker
-      position={position}
-      icon={icon}
-      eventHandlers={{
-        click: onClick,
-      }}
-    />
-  );
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (markerRef.current) {
+        markerRef.current.remove();
+        markerRef.current = null;
+      }
+    };
+  }, []);
+
+  return null; // We're managing the marker directly with Leaflet API
 };
 
 export default AircraftMarker;
