@@ -33,7 +33,7 @@ export function useFlightData(
   const retryAttemptRef = useRef<number>(0);
   const backoffTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Fetch flight data and region info
+  // Fetch flight data (fast updates)
   const fetchFlightData = useCallback(async (signal?: AbortSignal) => {
     const fetchStartTime = Date.now();
     // Fetching flight data
@@ -41,26 +41,13 @@ export function useFlightData(
     try {
       setError(null);
       
-      // Fetch flights, system status, and regions in parallel
-      const [flightData, statusData, regionsResponse] = await Promise.all([
-        flightAPI.getFlights(region),
-        flightAPI.getSystemStatus(),
-        flightAPI.getRegions()
-      ]);
+      // Only fetch flights for fast updates
+      const flightData = await flightAPI.getFlights(region);
 
       // Check if request was aborted
       if (signal?.aborted) return;
 
-      // Find current region data
-      const currentRegionData = regionsResponse.regions?.find(r => 
-        r.name?.toLowerCase().includes('texas') || 
-        r.name?.toLowerCase().includes('etex') ||
-        region === 'etex'
-      ) || regionsResponse.regions?.[0] || null;
-
       setAircraft(flightData);
-      setSystemStatus(statusData);
-      setRegionData(currentRegionData);
       setLoading(false);
       setLastUpdate(new Date());
 
@@ -106,6 +93,29 @@ export function useFlightData(
     }
   }, [region]);
 
+  // Fetch system data (slow updates)
+  const fetchSystemData = useCallback(async () => {
+    try {
+      const [statusData, regionsResponse] = await Promise.all([
+        flightAPI.getSystemStatus(),
+        flightAPI.getRegions()
+      ]);
+
+      // Find current region data
+      const currentRegionData = regionsResponse.regions?.find(r => 
+        r.name?.toLowerCase().includes('texas') || 
+        r.name?.toLowerCase().includes('etex') ||
+        region === 'etex'
+      ) || regionsResponse.regions?.[0] || null;
+
+      setSystemStatus(statusData);
+      setRegionData(currentRegionData);
+    } catch (err) {
+      // System data errors don't need to stop flight updates
+      console.warn('System data fetch failed:', err);
+    }
+  }, [region]);
+
   // Manual refetch function
   const refetch = useCallback(async () => {
     // Cancel any existing request
@@ -119,7 +129,8 @@ export function useFlightData(
 
     setLoading(true);
     await fetchFlightData(controller.signal);
-  }, [fetchFlightData]);
+    await fetchSystemData(); // Also fetch system data on manual refresh
+  }, [fetchFlightData, fetchSystemData]);
 
   // Set up auto-refresh interval
   useEffect(() => {
@@ -135,11 +146,16 @@ export function useFlightData(
 
     // Set up auto-refresh if enabled
     if (autoRefresh && refreshInterval > 0) {
-      // Starting refresh interval
+      // Starting refresh interval for flight data only
       intervalRef.current = setInterval(() => {
         fetchFlightData();
       }, refreshInterval);
     }
+
+    // Set up slower interval for system data (every 30 seconds)
+    const systemInterval = setInterval(() => {
+      fetchSystemData();
+    }, 30000);
 
     // Cleanup function
     return () => {
@@ -152,6 +168,7 @@ export function useFlightData(
       if (backoffTimeoutRef.current) {
         clearTimeout(backoffTimeoutRef.current);
       }
+      clearInterval(systemInterval);
     };
   }, [autoRefresh, refreshInterval, region]); // Only re-run when these change
 
