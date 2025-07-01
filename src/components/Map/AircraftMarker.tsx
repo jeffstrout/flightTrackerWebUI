@@ -71,7 +71,6 @@ const AircraftMarker: React.FC<AircraftMarkerProps> = ({
 }) => {
   const map = useMap();
   const markerRef = useRef<LeafletMarker | null>(null);
-  const lastPositionRef = useRef<{lat: number, lon: number} | null>(null);
   
   // Validate coordinates before creating position
   const hasValidCoordinates = (
@@ -97,24 +96,13 @@ const AircraftMarker: React.FC<AircraftMarkerProps> = ({
     const icon = createAircraftIcon(aircraft, isSelected);
     const position: LatLngExpression = [aircraft.lat, aircraft.lon];
     
-    // Check if position actually changed
-    const positionChanged = !lastPositionRef.current || 
-      lastPositionRef.current.lat !== aircraft.lat || 
-      lastPositionRef.current.lon !== aircraft.lon;
-    
-    if (positionChanged) {
-      console.log(`🛩️ POSITION CHANGED: ${aircraft.hex} moved from ${lastPositionRef.current?.lat},${lastPositionRef.current?.lon} to ${aircraft.lat},${aircraft.lon}`);
-      lastPositionRef.current = { lat: aircraft.lat, lon: aircraft.lon };
-    }
-    
     if (!markerRef.current) {
       // Create new marker
       markerRef.current = new LeafletMarker(position, { icon });
       markerRef.current.on('click', onClick);
       markerRef.current.addTo(map);
-      console.log(`✈️ NEW MARKER: ${aircraft.hex} created at ${aircraft.lat},${aircraft.lon}`);
     } else {
-      // Always update position and icon (even if position didn't change, icon might need updates for rotation/selection)
+      // Update existing marker position and icon
       markerRef.current.setLatLng(position);
       markerRef.current.setIcon(icon);
     }
